@@ -1,30 +1,31 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:studylog/main.dart';
+import 'package:studylog/screens/form_catatan_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Validasi menolak input kosong dan spasi', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: FormCatatanScreen()));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    await tester.enterText(find.byKey(const Key('field_judul')), '   ');
+    await tester.tap(find.text('Simpan'));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Mata kuliah wajib diisi'), findsOneWidget);
+    expect(find.text('Judul wajib diisi'), findsOneWidget);
+    expect(find.text('Isi catatan wajib diisi'), findsOneWidget);
+  });
+
+  testWidgets('Input valid menampilkan hasil', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: FormCatatanScreen()));
+
+    await tester.enterText(find.byKey(const Key('field_mata_kuliah')), 'Kriptografi');
+    await tester.enterText(find.byKey(const Key('field_judul')), 'Caesar Cipher');
+    await tester.enterText(find.byKey(const Key('field_isi')), 'Geser huruf');
+    await tester.tap(find.text('Simpan'));
+    await tester.pump();
+
+    expect(find.text('Caesar Cipher'), findsWidgets);
+    expect(find.text('Catatan berhasil disimpan'), findsOneWidget);
   });
 }
