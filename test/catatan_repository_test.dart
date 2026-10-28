@@ -47,4 +47,26 @@ void main() {
     await repo.hapus(id);
     expect(await repo.semua(), isEmpty);
   });
+
+  test('Cari berdasarkan kata kunci dan jadwal', () async {
+    await repo.tambah(contoh('Caesar Cipher').copyWith(jadwalId: () => 5));
+    await repo.tambah(
+      Catatan(
+        mataKuliah: 'Jaringan Nirkabel',
+        judul: 'WiFi 802.11',
+        isi: 'Standar IEEE',
+        tanggal: DateTime(2026, 10, 30, 19),
+        jadwalId: 7,
+      ),
+    );
+
+    expect(
+      (await repo.cari(kataKunci: 'caesar')).single.judul,
+      'Caesar Cipher',
+    );
+    expect((await repo.cari(kataKunci: 'ieee')).single.judul, 'WiFi 802.11');
+    expect((await repo.cari(jadwalId: 7)).single.judul, 'WiFi 802.11');
+    expect(await repo.cari(kataKunci: 'caesar', jadwalId: 7), isEmpty);
+    expect(await repo.cari(), hasLength(2));
+  });
 }

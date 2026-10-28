@@ -29,6 +29,20 @@ class FakeCatatanRepository extends CatatanRepository {
   Future<List<Catatan>> semua() async => _data.reversed.toList();
 
   @override
+  Future<List<Catatan>> cari({String kataKunci = '', int? jadwalId}) async {
+    final k = kataKunci.trim().toLowerCase();
+    return _data.reversed.where((c) {
+      final cocokKata =
+          k.isEmpty ||
+          c.judul.toLowerCase().contains(k) ||
+          c.mataKuliah.toLowerCase().contains(k) ||
+          c.isi.toLowerCase().contains(k);
+      final cocokJadwal = jadwalId == null || c.jadwalId == jadwalId;
+      return cocokKata && cocokJadwal;
+    }).toList();
+  }
+
+  @override
   Future<Catatan?> cariById(int id) async {
     for (final c in _data) {
       if (c.id == id) return c;

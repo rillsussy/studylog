@@ -89,4 +89,33 @@ void main() {
     expect(find.textContaining('Berikutnya: Kriptografi'), findsOneWidget);
     expect(find.byType(ActionChip), findsNWidgets(8));
   });
+
+  testWidgets('Pencarian memfilter daftar catatan', (tester) async {
+    _layarBesar(tester);
+    await tester.pumpWidget(_app(rabuPagi));
+    await tester.pumpAndSettle();
+
+    Future<void> catat(String chip, String isi) async {
+      await tester.tap(find.widgetWithText(ActionChip, chip));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('field_isi')), isi);
+      await tester.tap(find.text('Simpan'));
+      await tester.pumpAndSettle();
+    }
+
+    await catat('Kriptografi', 'Materi RSA');
+    await catat('Jaringan Nirkabel', 'Materi WiFi');
+
+    await tester.tap(find.text('Lihat Daftar Catatan'));
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile), findsNWidgets(2));
+
+    await tester.enterText(find.byKey(const Key('field_cari')), 'jaringan');
+    await tester.pumpAndSettle();
+    expect(find.byType(ListTile), findsOneWidget);
+
+    await tester.enterText(find.byKey(const Key('field_cari')), 'zzz');
+    await tester.pumpAndSettle();
+    expect(find.text('Tidak ada catatan yang cocok'), findsOneWidget);
+  });
 }
