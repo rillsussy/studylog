@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-/// Milestone 01: form catatan dengan validasi dan state lokal.
+import '../models/catatan.dart';
+import '../state/catatan_store.dart';
+
+/// Form tambah / ubah catatan.
 class FormCatatanScreen extends StatefulWidget {
-  const FormCatatanScreen({super.key});
+  /// Jika diisi, form berada pada mode ubah.
+  final Catatan? catatan;
+
+  const FormCatatanScreen({super.key, this.catatan});
 
   @override
   State<FormCatatanScreen> createState() => _FormCatatanScreenState();
@@ -10,13 +17,20 @@ class FormCatatanScreen extends StatefulWidget {
 
 class _FormCatatanScreenState extends State<FormCatatanScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _mataKuliahController = TextEditingController();
-  final _judulController = TextEditingController();
-  final _isiController = TextEditingController();
+  late final TextEditingController _mataKuliahController;
+  late final TextEditingController _judulController;
+  late final TextEditingController _isiController;
 
-  String? _hasilMataKuliah;
-  String? _hasilJudul;
-  String? _hasilIsi;
+  bool get _modeUbah => widget.catatan != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final c = widget.catatan;
+    _mataKuliahController = TextEditingController(text: c?.mataKuliah ?? '');
+    _judulController = TextEditingController(text: c?.judul ?? '');
+    _isiController = TextEditingController(text: c?.isi ?? '');
+  }
 
   @override
   void dispose() {
@@ -35,32 +49,33 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
 
   void _simpan() {
     if (!_formKey.currentState!.validate()) return;
-    setState(() {
-      _hasilMataKuliah = _mataKuliahController.text.trim();
-      _hasilJudul = _judulController.text.trim();
-      _hasilIsi = _isiController.text.trim();
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Catatan berhasil disimpan')),
+    final store = context.read<CatatanStore>();
+    final data = Catatan(
+      id: widget.catatan?.id,
+      mataKuliah: _mataKuliahController.text.trim(),
+      judul: _judulController.text.trim(),
+      isi: _isiController.text.trim(),
+      tanggal: widget.catatan?.tanggal ?? DateTime.now(),
     );
-  }
-
-  void _reset() {
-    _formKey.currentState!.reset();
-    _mataKuliahController.clear();
-    _judulController.clear();
-    _isiController.clear();
-    setState(() {
-      _hasilMataKuliah = null;
-      _hasilJudul = null;
-      _hasilIsi = null;
-    });
+    if (_modeUbah) {
+      store.ubah(data);
+    } else {
+      store.tambah(data);
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_modeUbah ? 'Catatan diperbarui' : 'Catatan disimpan'),
+      ),
+    );
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('StudyLog - Catatan Baru')),
+      appBar: AppBar(
+        title: Text(_modeUbah ? 'Ubah Catatan' : 'Catatan Baru'),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -92,8 +107,8 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
                 TextFormField(
                   key: const Key('field_isi'),
                   controller: _isiController,
-                  minLines: 4,
-                  maxLines: 8,
+                  minLines: 6,
+                  maxLines: 12,
                   decoration: const InputDecoration(
                     labelText: 'Isi Catatan',
                     alignLabelWithHint: true,
@@ -102,33 +117,11 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
                   validator: (v) => _wajibDiisi(v, 'Isi catatan'),
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: _reset,
-                        child: const Text('Reset'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: FilledButton(
-                        onPressed: _simpan,
-                        child: const Text('Simpan'),
-                      ),
-                    ),
-                  ],
+                FilledButton.icon(
+                  icon: const Icon(Icons.save),
+                  label: const Text('Simpan'),
+                  onPressed: _simpan,
                 ),
-                if (_hasilJudul != null) ...[
-                  const SizedBox(height: 24),
-                  Card(
-                    child: ListTile(
-                      title: Text(_hasilJudul!),
-                      subtitle: Text('$_hasilMataKuliah\n\n$_hasilIsi'),
-                      isThreeLine: true,
-                    ),
-                  ),
-                ],
               ],
             ),
           ),

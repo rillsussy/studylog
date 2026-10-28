@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'screens/form_catatan_screen.dart';
+import 'screens/beranda_screen.dart';
+import 'state/catatan_store.dart';
 
 void main() {
-  runApp(const StudyLogApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CatatanStore(),
+      child: const StudyLogApp(),
+    ),
+  );
 }
 
 class StudyLogApp extends StatelessWidget {
@@ -18,7 +25,7 @@ class StudyLogApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
       ),
-      home: const FormCatatanScreen(),
+      home: const BerandaScreen(),
     );
   }
 }
