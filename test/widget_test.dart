@@ -3,10 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
 import 'package:studylog/main.dart';
-import 'package:studylog/state/catatan_store.dart';
+import 'package:studylog/viewmodels/catatan_viewmodel.dart';
+
+import 'fakes.dart';
 
 Widget _app() => ChangeNotifierProvider(
-      create: (_) => CatatanStore(),
+      create: (_) => CatatanViewModel(FakeCatatanRepository())..muat(),
       child: const StudyLogApp(),
     );
 

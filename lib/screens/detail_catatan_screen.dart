@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../state/catatan_store.dart';
+import '../viewmodels/catatan_viewmodel.dart';
 import '../utils/format.dart';
 import 'form_catatan_screen.dart';
 
@@ -28,7 +28,8 @@ class DetailCatatanScreen extends StatelessWidget {
       ),
     );
     if (ok != true || !context.mounted) return;
-    context.read<CatatanStore>().hapus(id);
+    await context.read<CatatanViewModel>().hapus(id);
+    if (!context.mounted) return;
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Catatan dihapus')),
@@ -37,7 +38,7 @@ class DetailCatatanScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.watch<CatatanStore>().cariById(id);
+    final c = context.watch<CatatanViewModel>().cariById(id);
     if (c == null) {
       return Scaffold(
         appBar: AppBar(),

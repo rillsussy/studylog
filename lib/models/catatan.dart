@@ -29,4 +29,20 @@ class Catatan {
       tanggal: tanggal ?? this.tanggal,
     );
   }
+
+  Map<String, Object?> toMap() => {
+        if (id != null) 'id': id,
+        'mata_kuliah': mataKuliah,
+        'judul': judul,
+        'isi': isi,
+        'tanggal': tanggal.toIso8601String(),
+      };
+
+  factory Catatan.fromMap(Map<String, Object?> map) => Catatan(
+        id: map['id'] as int?,
+        mataKuliah: map['mata_kuliah'] as String,
+        judul: map['judul'] as String,
+        isi: map['isi'] as String,
+        tanggal: DateTime.parse(map['tanggal'] as String),
+      );
 }

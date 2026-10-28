@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../state/catatan_store.dart';
+import '../viewmodels/catatan_viewmodel.dart';
 import 'daftar_catatan_screen.dart';
 import 'form_catatan_screen.dart';
 
@@ -10,7 +10,7 @@ class BerandaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final jumlah = context.watch<CatatanStore>().items.length;
+    final jumlah = context.watch<CatatanViewModel>().items.length;
     return Scaffold(
       appBar: AppBar(title: const Text('StudyLog')),
       body: ListView(

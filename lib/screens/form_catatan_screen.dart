@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/catatan.dart';
-import '../state/catatan_store.dart';
+import '../viewmodels/catatan_viewmodel.dart';
 
 /// Form tambah / ubah catatan.
 class FormCatatanScreen extends StatefulWidget {
@@ -20,6 +20,8 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
   late final TextEditingController _mataKuliahController;
   late final TextEditingController _judulController;
   late final TextEditingController _isiController;
+
+  bool _menyimpan = false;
 
   bool get _modeUbah => widget.catatan != null;
 
@@ -47,9 +49,10 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
     return null;
   }
 
-  void _simpan() {
-    if (!_formKey.currentState!.validate()) return;
-    final store = context.read<CatatanStore>();
+  Future<void> _simpan() async {
+    if (_menyimpan || !_formKey.currentState!.validate()) return;
+    setState(() => _menyimpan = true);
+    final vm = context.read<CatatanViewModel>();
     final data = Catatan(
       id: widget.catatan?.id,
       mataKuliah: _mataKuliahController.text.trim(),
@@ -57,11 +60,21 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
       isi: _isiController.text.trim(),
       tanggal: widget.catatan?.tanggal ?? DateTime.now(),
     );
-    if (_modeUbah) {
-      store.ubah(data);
-    } else {
-      store.tambah(data);
+    try {
+      if (_modeUbah) {
+        await vm.ubah(data);
+      } else {
+        await vm.tambah(data);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _menyimpan = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menyimpan: $e')),
+      );
+      return;
     }
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(_modeUbah ? 'Catatan diperbarui' : 'Catatan disimpan'),
@@ -120,7 +133,7 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
                 FilledButton.icon(
                   icon: const Icon(Icons.save),
                   label: const Text('Simpan'),
-                  onPressed: _simpan,
+                  onPressed: _menyimpan ? null : _simpan,
                 ),
               ],
             ),

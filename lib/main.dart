@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'data/catatan_repository.dart';
+import 'data/database_helper.dart';
 import 'screens/beranda_screen.dart';
-import 'state/catatan_store.dart';
+import 'viewmodels/catatan_viewmodel.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  final repo = CatatanRepository(DatabaseHelper());
   runApp(
     ChangeNotifierProvider(
-      create: (_) => CatatanStore(),
+      create: (_) => CatatanViewModel(repo)..muat(),
       child: const StudyLogApp(),
     ),
   );
