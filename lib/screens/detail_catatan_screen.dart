@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../viewmodels/catatan_viewmodel.dart';
+import '../viewmodels/jadwal_viewmodel.dart';
 import '../utils/format.dart';
 import 'form_catatan_screen.dart';
 
@@ -31,9 +32,8 @@ class DetailCatatanScreen extends StatelessWidget {
     await context.read<CatatanViewModel>().hapus(id);
     if (!context.mounted) return;
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Catatan dihapus')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Catatan dihapus')));
   }
 
   @override
@@ -45,6 +45,7 @@ class DetailCatatanScreen extends StatelessWidget {
         body: const Center(child: Text('Catatan tidak ditemukan')),
       );
     }
+    final jadwal = context.watch<JadwalViewModel>().cariById(c.jadwalId);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detail Catatan'),
@@ -54,9 +55,7 @@ class DetailCatatanScreen extends StatelessWidget {
             icon: const Icon(Icons.edit),
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => FormCatatanScreen(catatan: c),
-              ),
+              MaterialPageRoute(builder: (_) => FormCatatanScreen(catatan: c)),
             ),
           ),
           IconButton(
@@ -70,6 +69,12 @@ class DetailCatatanScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           Chip(label: Text(c.mataKuliah)),
+          if (jadwal != null)
+            Text(
+              '${jadwal.kode} • ${jadwal.labelHari} ${jadwal.labelJam} • '
+              '${jadwal.ruang}\n${jadwal.dosen}',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           const SizedBox(height: 8),
           Text(c.judul, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 4),

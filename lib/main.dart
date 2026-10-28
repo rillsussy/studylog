@@ -3,15 +3,24 @@ import 'package:provider/provider.dart';
 
 import 'data/catatan_repository.dart';
 import 'data/database_helper.dart';
+import 'data/jadwal_repository.dart';
 import 'screens/beranda_screen.dart';
 import 'viewmodels/catatan_viewmodel.dart';
+import 'viewmodels/jadwal_viewmodel.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  final repo = CatatanRepository(DatabaseHelper());
+  final helper = DatabaseHelper();
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => CatatanViewModel(repo)..muat(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => JadwalViewModel(JadwalRepository(helper))..muat(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CatatanViewModel(CatatanRepository(helper))..muat(),
+        ),
+      ],
       child: const StudyLogApp(),
     ),
   );

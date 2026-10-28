@@ -1,6 +1,22 @@
 import 'package:studylog/data/catatan_repository.dart';
 import 'package:studylog/data/database_helper.dart';
+import 'package:studylog/data/jadwal_repository.dart';
+import 'package:studylog/data/jadwal_seed.dart';
 import 'package:studylog/models/catatan.dart';
+import 'package:studylog/models/jadwal.dart';
+
+/// Jadwal seed dengan id 1..8 (urutan sama seperti di database).
+final jadwalDenganId = [
+  for (var i = 0; i < jadwalAwal.length; i++)
+    Jadwal.fromMap({...jadwalAwal[i].toMap(), 'id': i + 1}),
+];
+
+class FakeJadwalRepository extends JadwalRepository {
+  FakeJadwalRepository() : super(DatabaseHelper());
+
+  @override
+  Future<List<Jadwal>> semua() async => jadwalDenganId;
+}
 
 /// Repository palsu (in-memory) agar widget test tidak bergantung SQLite.
 class FakeCatatanRepository extends CatatanRepository {

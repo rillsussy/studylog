@@ -22,23 +22,21 @@ class DaftarCatatanScreen extends StatelessWidget {
       body = const Center(child: Text('Belum ada catatan'));
     } else {
       body = ListView.separated(
-              itemCount: items.length,
-              separatorBuilder: (_, _) => const Divider(height: 1),
-              itemBuilder: (context, i) {
-                final c = items[i];
-                return ListTile(
-                  title: Text(c.judul),
-                  subtitle: Text('${c.mataKuliah} • ${formatTanggal(c.tanggal)}'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => DetailCatatanScreen(id: c.id!),
-                    ),
-                  ),
-                );
-              },
-            );
+        itemCount: items.length,
+        separatorBuilder: (_, _) => const Divider(height: 1),
+        itemBuilder: (context, i) {
+          final c = items[i];
+          return ListTile(
+            title: Text(c.judul),
+            subtitle: Text('${c.mataKuliah} • ${formatTanggal(c.tanggal)}'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => DetailCatatanScreen(id: c.id!)),
+            ),
+          );
+        },
+      );
     }
     return Scaffold(
       appBar: AppBar(title: const Text('Daftar Catatan')),

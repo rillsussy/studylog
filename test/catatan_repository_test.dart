@@ -21,11 +21,11 @@ void main() {
   tearDown(() => helper.tutup());
 
   Catatan contoh([String judul = 'Caesar Cipher']) => Catatan(
-        mataKuliah: 'Kriptografi',
-        judul: judul,
-        isi: 'Geser huruf',
-        tanggal: DateTime(2026, 10, 28, 20, 30),
-      );
+    mataKuliah: 'Kriptografi',
+    judul: judul,
+    isi: 'Geser huruf',
+    tanggal: DateTime(2026, 10, 28, 20, 30),
+  );
 
   test('Create & Read', () async {
     final id = await repo.tambah(contoh());
