@@ -10,9 +10,9 @@
 
 | Isian | Data Mahasiswa |
 |---|---|
-| **Nama / NIM** | `[Isi Nama Lengkap Anda]` / `[Isi NIM Anda]` |
-| **Kelas / Kelompok** | IFB5J / Mandiri (Individu) |
-| **Anggota tim / peran** | `@rillsussy` — Pengembang Aplikasi, Penguji (Tester), & Dokumentasi |
+| **Nama / NIM** | 1. **Ryanda Hermawan** (`2411068`)<br>2. **Dewi Nofitta Sari** (`2411065`)<br>3. **Bintang Sahda Rayyu Sonora** (`2411025`) |
+| **Kelas / Kelompok** | IFB5J — Kelompok StudyLog |
+| **Anggota tim / peran** | • **Ryanda Hermawan:** Arsitektur SQLite 3 Tabel Relasional, Migrasi Skema & Git<br>• **Dewi Nofitta Sari:** Desain Antarmuka Multi-Layar, Form Validasi & State Provider<br>• **Bintang Sahda Rayyu Sonora:** Pengujian Sistem (Unit/Widget/Device), Video Demo & Dokumentasi |
 | **Repository GitHub** | [https://github.com/rillsussy/studylog](https://github.com/rillsussy/studylog) |
 | **Perangkat uji / Android** | Ponsel Android Fisik (USB Debugging / APK Debug) |
 | **Tautan Video Demo** | [https://youtu.be/TQ_v1NJ2w4k](https://youtu.be/TQ_v1NJ2w4k) |
@@ -117,12 +117,12 @@ Dialog pengaman dengan pilihan **Batal** dan **Hapus** sebelum menghapus baris d
 
 | ID | Kebutuhan Pengguna (*User Story*) | Penanggung Jawab | Status |
 |:---:|---|---|:---:|
-| **US-01** | Sebagai mahasiswa, saya ingin menambah catatan agar isi kuliah terdokumentasi secara offline. | `@rillsussy` | Selesai |
-| **US-02** | Sebagai mahasiswa, saya ingin mengedit dan menghapus catatan dengan konfirmasi agar kesalahan dapat diperbaiki dengan aman. | `@rillsussy` | Selesai |
-| **US-03** | Sebagai mahasiswa, saya ingin mencari catatan berdasarkan kata kunci dan mengurutkan terbaru/terlama agar materi mudah ditemukan kembali. | `@rillsussy` | Selesai |
-| **US-04** | Sebagai mahasiswa kelas malam IFB5J, saya ingin aplikasi otomatis mengenali mata kuliah yang sedang berlangsung saat dibuka agar saya langsung bisa mengetik catatan tanpa mencari mata kuliah dulu. | `@rillsussy` | Selesai |
-| **US-05** | Sebagai mahasiswa, saya ingin mengelompokkan catatan ke dalam kategori/tag (*Materi Kuliah, Praktikum, Tugas, Kuis & Ujian, Rangkuman*) pada skema tiga tabel relasional. | `@rillsussy` | Selesai |
-| **US-06** | Sebagai mahasiswa, saya ingin menandai catatan penting sebagai Favorit dan menyalin (*ekspor*) teks catatan agar mudah dipelajari menjelang ujian. | `@rillsussy` | Selesai |
+| **US-01** | Sebagai mahasiswa, saya ingin menambah catatan agar isi kuliah terdokumentasi secara offline. | Ryanda Hermawan | Selesai |
+| **US-02** | Sebagai mahasiswa, saya ingin mengedit dan menghapus catatan dengan konfirmasi agar kesalahan dapat diperbaiki dengan aman. | Dewi Nofitta Sari | Selesai |
+| **US-03** | Sebagai mahasiswa, saya ingin mencari catatan berdasarkan kata kunci dan mengurutkan terbaru/terlama agar materi mudah ditemukan kembali. | Bintang Sahda Rayyu Sonora | Selesai |
+| **US-04** | Sebagai mahasiswa kelas malam IFB5J, saya ingin aplikasi otomatis mengenali mata kuliah yang sedang berlangsung saat dibuka agar saya langsung bisa mengetik catatan tanpa mencari mata kuliah dulu. | Ryanda Hermawan | Selesai |
+| **US-05** | Sebagai mahasiswa, saya ingin mengelompokkan catatan ke dalam kategori/tag (*Materi Kuliah, Praktikum, Tugas, Kuis & Ujian, Rangkuman*) pada skema tiga tabel relasional. | Dewi Nofitta Sari | Selesai |
+| **US-06** | Sebagai mahasiswa, saya ingin menandai catatan penting sebagai Favorit dan menyalin (*ekspor*) teks catatan agar mudah dipelajari menjelang ujian. | Bintang Sahda Rayyu Sonora | Selesai |
 
 ### 5.3 Ringkasan Pengujian Otomatis (`flutter analyze` & `flutter test`)
 - `flutter analyze`: **No issues found!**

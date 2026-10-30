@@ -31,6 +31,15 @@ class TentangPage extends StatelessWidget {
           ),
           const Divider(height: 32),
           const ListTile(
+            leading: Icon(Icons.groups_outlined),
+            title: Text('Anggota Kelompok (Kelas IFB5J)'),
+            subtitle: Text(
+              '• Ryanda Hermawan (2411068)\n'
+              '• Dewi Nofitta Sari (2411065)\n'
+              '• Bintang Sahda Rayyu Sonora (2411025)',
+            ),
+          ),
+          const ListTile(
             leading: Icon(Icons.school_outlined),
             title: Text('Mata Kuliah & Institusi'),
             subtitle: Text(
