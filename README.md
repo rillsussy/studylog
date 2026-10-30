@@ -134,8 +134,9 @@ flutter build apk --debug
 ---
 
 ## Dokumentasi & Bukti Pengujian
-Seluruh matriks pengujian (M1, Lifecycle M2, CRUD M3, Backlog PjBL, Logbook Debugging, Screenshot Antarmuka, dan Refleksi Individual) terdokumentasi lengkap pada:
-- [`docs/LAPORAN_PRAKTIKUM.md`](docs/LAPORAN_PRAKTIKUM.md)
+- **Video Demo Aplikasi (YouTube):** [https://youtu.be/TQ_v1NJ2w4k](https://youtu.be/TQ_v1NJ2w4k)
+- Seluruh matriks pengujian (M1, Lifecycle M2, CRUD M3, Backlog PjBL, Logbook Debugging, Screenshot Antarmuka, dan Refleksi Individual) terdokumentasi lengkap pada:
+  - [`docs/LAPORAN_PRAKTIKUM.md`](docs/LAPORAN_PRAKTIKUM.md)
 
 ---
 

@@ -15,7 +15,7 @@
 | **Anggota tim / peran** | `@rillsussy` — Pengembang Aplikasi, Penguji (Tester), & Dokumentasi |
 | **Repository GitHub** | [https://github.com/rillsussy/studylog](https://github.com/rillsussy/studylog) |
 | **Perangkat uji / Android** | Ponsel Android Fisik (USB Debugging / APK Debug) |
-| **Tautan Video Demo** | `[Tempel Tautan Google Drive / YouTube Video Demo 3–5 Menit di sini]` |
+| **Tautan Video Demo** | [https://youtu.be/TQ_v1NJ2w4k](https://youtu.be/TQ_v1NJ2w4k) |
 
 ---
 
