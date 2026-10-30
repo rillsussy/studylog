@@ -1,111 +1,170 @@
-# Laporan Praktikum & Proyek Akhir: StudyLog
+# Laporan Workbook Praktikum & Proyek Akhir: StudyLog
+
 **Mata Kuliah:** Pemrograman Aplikasi Bergerak  
 **Program Studi:** Informatika — Universitas Mulia  
-**Kelas:** IFB5J  
-**Tahun Akademik:** 2026  
+**Edisi:** Pembelajaran Terpadu 2026  
 
 ---
 
-## 1. Identitas Mahasiswa & Proyek
-- **Nama Mahasiswa:** [Nama Lengkap Anda]
-- **NIM:** [NIM Anda]
-- **Kelas:** IFB5J
-- **Tautan Repository GitHub:** [https://github.com/rillsussy/studylog](https://github.com/rillsussy/studylog)
-- **Tautan Video Demo:** [Tuliskan Tautan Google Drive / YouTube Video Demo di sini]
+## Identitas Mahasiswa dan Kelompok
+
+| Isian | Data Mahasiswa |
+|---|---|
+| **Nama / NIM** | `[Isi Nama Lengkap Anda]` / `[Isi NIM Anda]` |
+| **Kelas / Kelompok** | IFB5J / Mandiri (Individu) |
+| **Anggota tim / peran** | `@rillsussy` — Pengembang Aplikasi, Penguji (Tester), & Dokumentasi |
+| **Repository GitHub** | [https://github.com/rillsussy/studylog](https://github.com/rillsussy/studylog) |
+| **Perangkat uji / Android** | Ponsel Android Fisik (USB Debugging / APK Debug) |
+| **Tautan Video Demo** | `[Tempel Tautan Google Drive / YouTube Video Demo 3–5 Menit di sini]` |
 
 ---
 
-## 2. Ringkasan Proyek & Implementasi Checkpoint
+## 1. Praktikum 1 — Form Interaktif, State, dan Validasi (Checkpoint M1)
 
-Aplikasi **StudyLog** adalah aplikasi catatan perkuliahan Android yang beroperasi secara penuh tanpa koneksi internet (*offline-first*). Aplikasi dibangun secara modular mengikuti 3 Checkpoint terpadu dan diperluas dengan fitur Project-Based Learning (PjBL):
+### 1.1 Uji Praktik M1 (Bab 3.4 Workbook)
 
-1. **Milestone 01 (M1) — Interaksi & Form:**
-   - Formulir catatan dengan 3 input wajib (`Mata Kuliah`, `Judul`, `Isi`).
-   - Validasi ketat yang menolak input kosong maupun input yang hanya berisi karakter spasi (`trim().isEmpty`).
-   - State lokal interaktif serta umpan balik visual menggunakan `SnackBar`.
+| ID | Skenario | Hasil yang Diharapkan | Status |
+|:---:|---|---|:---:|
+| **M1-T1** | Semua field kosong, klik tombol Simpan | Pesan wajib diisi tampil pada setiap field wajib | ☑ Lulus |
+| **M1-T2** | Satu field berisi karakter spasi saja (`   `) | Validasi `trim().isEmpty` menolak input | ☑ Lulus |
+| **M1-T3** | Semua field terisi valid (termasuk Topik ≥ 3 karakter bila diisi) | Data diproses, status tombol berubah, dan `SnackBar` muncul | ☑ Lulus |
+| **M1-T4** | Ubah judul catatan, lalu simpan kembali | Judul catatan diperbarui di tampilan | ☑ Lulus |
 
-2. **Milestone 02 (M2) — Navigasi & State Management:**
-   - Alur navigasi 4 layar: **Beranda $\to$ Daftar Catatan $\to$ Form Catatan $\to$ Detail Catatan**.
-   - Manajemen rute menggunakan `Navigator.push` dan `Navigator.pop` dengan struktur *back stack* yang konsisten.
-   - Pemisahan logika dari widget ke state terpusat menggunakan `ChangeNotifier` dan `Provider`.
-
-3. **Milestone 03 (M3) — Persistensi Database SQLite & Arsitektur Berlapis:**
-   - Penyimpanan data permanen di perangkat menggunakan paket `sqflite` dan `path`.
-   - Mengikuti pola arsitektur berlapis (*Layered Architecture*):
-     $$\text{UI (Screens)} \longleftrightarrow \text{ViewModel} \longleftrightarrow \text{Repository} \longleftrightarrow \text{DatabaseHelper} \longleftrightarrow \text{SQLite}$$
-   - Fitur CRUD lengkap (*Create, Read, Update, Delete*) disertai dialog konfirmasi pembatalan/penghapusan.
-   - Uji persistensi data setelah *full restart*.
-
-4. **Pengembangan Mandiri PjBL (Extension):**
-   - **Ekstensi C (Relasional multi-tabel):** Tabel `jadwal` (8 mata kuliah kelas IFB5J) berelasi 1..N ke `catatan.jadwal_id` dengan migrasi skema v1 $\to$ v2 dan auto-seed jadwal.
-   - **Fitur Cerdas "Catat Sekarang":** Sistem mencocokkan waktu real-time (`DateTime.now()`) dengan jam kuliah. Saat jam kuliah aktif (atau 15 menit menjelang mulai), Beranda menampilkan kartu aktif beserta tombol **"Catat Sekarang"** yang langsung membuka form dengan mata kuliah dan judul terisi otomatis.
-   - **Ekstensi A (Pencarian & Filter):** Pencarian *real-time* berbasis kata kunci pada judul/mata kuliah/isi serta filter cepat menggunakan *choice chips* per mata kuliah.
+### 1.2 Latihan Mandiri Bab 3.5
+1. **Field "Topik" dengan validasi minimal 3 karakter:** Ditambahkan pada [`lib/screens/form_catatan_page.dart`](../lib/screens/form_catatan_page.dart) (`Key('field_topik')`) yang memeriksa panjang teks `value.trim().length < 3` dan menampilkan pesan `'Topik minimal 3 karakter'`.
+2. **Perubahan warna/ikon tombol saat berhasil menyimpan:** Tombol `FilledButton.icon` berubah menggunakan `Icons.check_circle` dan warna hijau ketika proses simpan berhasil dijalankan.
+3. **Mengapa `setState()` tidak sama dengan database dan bukan penyimpanan permanen?**  
+   `setState()` hanya memperbarui variabel di memori kerja sementara (RAM) milik objek `State` yang sedang aktif dan menjadwalkan pembangunan ulang (*rebuild*) pohon widget di layar. Begitu proses aplikasi dihentikan oleh sistem operasi Android (*force stop* / tutup paksa), seluruh alokasi RAM aplikasi dibersihkan sehingga data hilang. Penyimpanan permanen memerlukan penulisan ke media penyimpanan non-volatil perangkat (*flash storage*), seperti berkas database SQLite.
 
 ---
 
-## 3. Bukti Tangkapan Layar (Screenshots Antarmuka)
+## 2. Praktikum 2 — Navigasi, Lifecycle, dan State (Checkpoint M2)
 
-Berikut dokumentasi antarmuka yang diambil langsung dari perangkat Android:
+### 2.1 Tabel Observasi Lifecycle (Bab 4.6 Workbook)
 
-### 3.1. Validasi Formulir (Mencegah Input Kosong / Spasi)
-Menampilkan pesan kesalahan validasi saat form disimpan tanpa data yang valid.
+| Kejadian | Prediksi Mahasiswa | Hasil Aktual |
+|---|---|---|
+| **Navigasi Beranda → Daftar → Detail** | `Navigator.push` menumpuk route di *back stack*; tombol kembali (`pop`) mengembalikan ke Daftar terlebih dahulu, lalu ke Beranda. | Sesuai prediksi. Urutan kembali konsisten mengikuti *back stack* (`Detail → Daftar → Beranda`), tidak melompat langsung ke awal. |
+| **Rotasi layar / rebuild widget** | Widget dibangun ulang menyesuaikan ukuran baru, tetapi objek `ChangeNotifier` di tingkat atas (`Provider`) tetap hidup sehingga daftar catatan tetap tampil. | Sesuai prediksi. Seluruh daftar catatan dan filter tetap terjaga saat layar berotasi maupun saat terjadi *rebuild*. |
+| **Hot Reload** | Kode tampilan diperbarui ke VM Dart tanpa menjalankan ulang `main()`, sehingga state di memori tetap bertahan. | Sesuai prediksi. Perubahan teks/UI langsung terlihat dalam hitungan sub-detik sementara data sesi debug tetap utuh. |
+| **Force stop lalu buka ulang aplikasi** | Pada tahap M2 (*in-memory*), seluruh isi RAM hilang sehingga daftar kembali kosong. Pada tahap M3 (SQLite), data dibaca ulang dari `studylog.db` dan tetap utuh. | Sesuai prediksi. Di M2 data hilang saat aplikasi dimatikan total; setelah beralih ke SQLite pada M3, seluruh catatan tetap tersedia saat aplikasi dibuka kembali. |
+
+### 2.2 Tugas Pengayaan Bab 4.7
+- **Halaman "Tentang Aplikasi":** Diimplementasikan pada [`lib/screens/tentang_page.dart`](../lib/screens/tentang_page.dart) dan dihubungkan langsung melalui ikon informasi pada `AppBar` halaman Beranda.
+- **Jumlah Total Catatan dengan `Consumer`:** Ditampilkan secara reaktif menggunakan `Consumer<CatatanViewModel>` baik pada Beranda maupun bagian atas halaman Daftar Catatan (`Total catatan: N`).
+
+---
+
+## 3. Praktikum 3 — SQLite, Repository, dan CRUD (Checkpoint M3)
+
+### 3.1 Matriks Pengujian CRUD & Persistensi (Bab 5.10 Workbook)
+
+| Kasus | Langkah Uji | Ekspektasi | Hasil | Bukti Pengujian |
+|---|---|---|---|---|
+| **T1 — Create** | Input Mata Kuliah, Judul, dan Isi lalu tekan Simpan | Item baru tersimpan ke SQLite dan muncul di Daftar | ☑ Lulus | Uji perangkat & `widget_test.dart` |
+| **T2 — Read** | Buka Daftar Catatan lalu ketuk item ke Detail | Rincian judul, mata kuliah, kategori, waktu, dan isi sesuai input | ☑ Lulus | Uji perangkat & `widget_test.dart` |
+| **T3 — Update** | Ketuk ikon Ubah di Detail, ganti judul, lalu Simpan | Perubahan tersimpan ke SQLite dan langsung tampil terbaru | ☑ Lulus | Uji perangkat & `widget_test.dart` |
+| **T4 — Delete batal** | Ketuk ikon Hapus di Detail lalu pilih **Batal** pada dialog | Dialog tertutup dan item **tidak** dihapus | ☑ Lulus | Uji perangkat & `widget_test.dart` |
+| **T5 — Delete setuju** | Ketuk ikon Hapus di Detail lalu pilih **Hapus** pada dialog | Item terpilih hilang dari daftar & terhapus dari SQLite | ☑ Lulus | Uji perangkat & `widget_test.dart` |
+| **T6 — Persistence** | Tambah catatan, tutup paksa aplikasi (*swipe recent apps / force stop*), lalu buka ulang | Catatan tetap tersedia utuh tanpa koneksi internet | ☑ Lulus | Uji perangkat Android & `database_migrasi_test.dart` |
+| **T7 — Validasi** | Tekan Simpan saat field kosong / berisi spasi / topik 2 huruf | Pesan kesalahan validasi tampil dan penyimpanan dicegah | ☑ Lulus | Screenshot `01` & `widget_test.dart` |
+
+---
+
+## 4. Dokumentasi Tangkapan Layar (Screenshots Perangkat Android)
+
+### 4.1 Validasi Form (M1 & M3-T7)
+Menampilkan pesan kesalahan validasi ketika field wajib dibiarkan kosong.  
 ![Validasi Form](screenshots/01_form_validasi_error.png)
 
-### 3.2. Beranda & Deteksi Jadwal Kuliah
-Menampilkan informasi perkuliahan berikutnya serta daftar tombol cepat (*chips*) 8 mata kuliah kelas IFB5J.
+### 4.2 Beranda, Jadwal Kuliah Berikutnya, & Tombol Cepat 8 Mata Kuliah
+Menampilkan status jadwal real-time serta pintasan cepat mencatat tiap mata kuliah kelas IFB5J.  
 ![Beranda & Jadwal](screenshots/02_beranda_jadwal.png)
 
-### 3.3. Formulir Catatan Baru
-Mata kuliah terpilih dari jadwal dan field dapat diisi dengan mudah.
+### 4.3 Formulir Tambah Catatan
+Pemilihan mata kuliah dan pengisian catatan perkuliahan.  
 ![Form Tambah Catatan](screenshots/03_form_tambah_catatan.png)
 
-### 3.4. Layar Daftar Catatan & Fitur Pencarian / Filter
-Daftar catatan perkuliahan dilengkapi kolom pencarian dan tombol filter kategori mata kuliah.
+### 4.4 Daftar Catatan, Pencarian, dan Filter
+Menampilkan daftar catatan yang tersimpan di SQLite beserta kolom pencarian dan chip filter.  
 ![Daftar Catatan](screenshots/04_daftar_catatan_filter.png)
 
-### 3.5. Layar Detail Catatan
-Menampilkan rincian judul, isi catatan, tanggal, serta metadata relasi jadwal (kode MK, jam, ruang, dosen).
+### 4.5 Detail Catatan & Informasi Relasi Jadwal
+Menampilkan isi catatan lengkap beserta informasi kode MK, hari, jam, ruang, dan dosen pengampu dari tabel relasi.  
 ![Detail Catatan](screenshots/05_detail_catatan.png)
 
-### 3.6. Dialog Konfirmasi Hapus
-Dialog pengaman sebelum catatan dihapus secara permanen dari database SQLite.
+### 4.6 Dialog Konfirmasi Hapus (T4 & T5)
+Dialog pengaman dengan pilihan **Batal** dan **Hapus** sebelum menghapus baris dari SQLite.  
 ![Dialog Konfirmasi Hapus](screenshots/06_dialog_konfirmasi_hapus.png)
 
 ---
 
-## 4. Matriks Pengujian & Observasi Sistem
+## 5. PjBL — Pengembangan Mandiri StudyLog (Bab 6 Workbook)
 
-| No | Kasus Uji | Skenario Pengujian | Hasil yang Diharapkan | Hasil Pengamatan | Status |
-|:--:|---|---|---|---|:--:|
-| **T1** | Validasi Input Kosong | Menekan tombol "Simpan" dengan seluruh field kosong | Sistem menolak simpan dan menampilkan pesan kesalahan "wajib diisi" di setiap field | Pesan error muncul di bawah setiap field | **Lulus** |
-| **T2** | Validasi Input Spasi | Mengisi field hanya dengan spasi (`   `) lalu simpan | Nilai spasi ditolak setelah `trim()`, sistem meminta input valid | Muncul pesan error "Judul wajib diisi" | **Lulus** |
-| **T3** | Create (Tambah Catatan) | Mengisi data catatan lengkap lalu tekan "Simpan" | Data tersimpan ke database lokal SQLite dan tampil di Daftar Catatan | Catatan langsung muncul di baris teratas daftar | **Lulus** |
-| **T4** | Read (Detail Catatan) | Memilih salah satu catatan dari Daftar Catatan | Halaman Detail terbuka dengan rincian yang cocok dengan data input | Rincian judul, isi, waktu, dan dosen tampil akurat | **Lulus** |
-| **T5** | Update (Ubah Catatan) | Menekan ikon edit di Detail, mengubah judul/isi, lalu simpan | Data pada database diperbarui dan perubahan langsung terlihat di Detail & Daftar | Judul dan isi berhasil diperbarui tanpa duplikasi | **Lulus** |
-| **T6** | Delete (Batal Hapus) | Menekan ikon hapus di Detail, lalu menekan tombol "Batal" | Dialog tertutup dan catatan tetap tersimpan aman di database | Catatan tidak terhapus | **Lulus** |
-| **T7** | Delete (Setuju Hapus) | Menekan ikon hapus di Detail, lalu menekan tombol "Hapus" | Catatan terhapus dari database SQLite dan kembali ke halaman Daftar | Catatan hilang dari daftar, SnackBar konfirmasi muncul | **Lulus** |
-| **T8** | Persistensi (Full Restart) | Menambah catatan, menutup paksa aplikasi (*kill recent apps*), lalu membuka ulang aplikasi | Data catatan tetap tersimpan dan langsung tampil kembali tanpa koneksi internet | Seluruh catatan tetap utuh tersimpan di SQLite | **Lulus** |
-| **T9** | Smart Live Course / Catat Sekarang | Membuka aplikasi pada jam kuliah (19:00 - 22:00) | Muncul kartu "SEDANG BERLANGSUNG", tombol "Catat Sekarang" mengotomatisasi pengisian mata kuliah | Pengguna dapat langsung mengetik isi materi tanpa mencari mata kuliah | **Lulus** |
-| **T10** | Pencarian & Filter | Mengetik kata kunci di kolom pencarian atau memilih chip mata kuliah | Daftar catatan hanya menyaring catatan yang cocok secara instan | Filter dan search berfungsi secara *real-time* | **Lulus** |
+### 5.1 Cakupan Pengembangan Pilihan (Bab 6.2 Workbook)
+
+| Fitur Pengembangan | Indikator Keberhasilan | Tingkat | Status di StudyLog |
+|---|---|:---:|:---:|
+| **Cari catatan** | Daftar terfilter berdasarkan kata kunci judul/mata kuliah/topik/isi | Dasar | ☑ Selesai |
+| **Urutkan catatan** | Urutan **Terbaru** / **Terlama** dapat dipilih dari AppBar Daftar | Dasar | ☑ Selesai |
+| **Kategori / mata kuliah** | Pengelompokan dan filter chip berdasarkan mata kuliah & kategori | Menengah | ☑ Selesai |
+| **Tandai favorit** | Status bintang favorit tersimpan di SQLite & bertahan setelah restart | Menengah | ☑ Selesai |
+| **Tiga tabel relasional** | Skema relasi `jadwal` (MK), `catatan`, dan `kategori` (tag) + migrasi `v1 → v2 → v3` | Lanjutan | ☑ Selesai |
+| **Ekspor teks** | Catatan dapat disalin ke papan klip (*clipboard*) dalam format rapi | Lanjutan | ☑ Selesai |
+| **Inovasi: Catat Sekarang** | Deteksi jam kuliah aktif otomatis sehingga mahasiswa langsung mencatat tanpa mencari MK | Unggulan | ☑ Selesai |
+
+### 5.2 Backlog PjBL (Bab 6.3 Workbook)
+
+| ID | Kebutuhan Pengguna (*User Story*) | Penanggung Jawab | Status |
+|:---:|---|---|:---:|
+| **US-01** | Sebagai mahasiswa, saya ingin menambah catatan agar isi kuliah terdokumentasi secara offline. | `@rillsussy` | Selesai |
+| **US-02** | Sebagai mahasiswa, saya ingin mengedit dan menghapus catatan dengan konfirmasi agar kesalahan dapat diperbaiki dengan aman. | `@rillsussy` | Selesai |
+| **US-03** | Sebagai mahasiswa, saya ingin mencari catatan berdasarkan kata kunci dan mengurutkan terbaru/terlama agar materi mudah ditemukan kembali. | `@rillsussy` | Selesai |
+| **US-04** | Sebagai mahasiswa kelas malam IFB5J, saya ingin aplikasi otomatis mengenali mata kuliah yang sedang berlangsung saat dibuka agar saya langsung bisa mengetik catatan tanpa mencari mata kuliah dulu. | `@rillsussy` | Selesai |
+| **US-05** | Sebagai mahasiswa, saya ingin mengelompokkan catatan ke dalam kategori/tag (*Materi Kuliah, Praktikum, Tugas, Kuis & Ujian, Rangkuman*) pada skema tiga tabel relasional. | `@rillsussy` | Selesai |
+| **US-06** | Sebagai mahasiswa, saya ingin menandai catatan penting sebagai Favorit dan menyalin (*ekspor*) teks catatan agar mudah dipelajari menjelang ujian. | `@rillsussy` | Selesai |
+
+### 5.3 Ringkasan Pengujian Otomatis (`flutter analyze` & `flutter test`)
+- `flutter analyze`: **No issues found!**
+- `flutter test`: Seluruh berkas pengujian lulus (`catatan_model_test.dart`, `catatan_repository_test.dart`, `database_migrasi_test.dart`, `status_kuliah_test.dart`, `widget_test.dart`).
 
 ---
 
-## 5. Ringkasan Pengujian Otomatis (Automated Tests)
-Proyek dilengkapi dengan pengujian unit, widget, dan migrasi database:
-- **Total Pengujian:** 16 pengujian otomatis (`flutter test`)
-- **Status Static Analysis:** 0 issue (`flutter analyze`)
-- **Daftar Berkas Pengujian:**
-  1. `test/catatan_model_test.dart`: Validasi model serialisasi JSON/Map dan copyWith.
-  2. `test/catatan_repository_test.dart`: Pengujian CRUD langsung ke SQLite FFI in-memory.
-  3. `test/status_kuliah_test.dart`: Logika penentuan kuliah aktif, kuliah segera dimulai, dan kuliah berikutnya.
-  4. `test/database_migrasi_test.dart`: Pengujian migrasi otomatis skema v1 ke skema v2 relasional.
-  5. `test/widget_test.dart`: Pengujian interaksi UI form, alur navigasi, dan simulasi tombol "Catat Sekarang".
+## 6. Diagnostik Kesalahan & Logbook Debugging (Bab 7.1 Workbook)
+
+| Tanggal / Tahap | Error / Observasi | Dugaan Penyebab | Solusi yang Diuji | Hasil |
+|---|---|---|---|---|
+| **29 Okt 2026 / M3** | `StateError: databaseFactory not initialized` saat menjalankan `widget_test.dart` | Konstruktor `DatabaseHelper` membaca getter global `databaseFactory` milik `sqflite` secara *eager* padahal lingkungan widget test tidak menjalankan engine Android. | Mengubah resolusi `_factory` menjadi *lazy getter* yang baru dipanggil ketika koneksi database benar-benar dibuka, serta membuat `FakeCatatanRepository` untuk widget test. | **Teratasi** — Widget test dan repository test (FFI) sama-sama berjalan bersih. |
+| **29 Okt 2026 / Ekstensi** | `WidgetController.tap` gagal menemukan tombol Simpan pada `widget_test.dart` | Ukuran layar default lingkungan test (`800x600`) terlalu pendek ketika chip mata kuliah & form ditampilkan sehingga tombol berada di luar *viewport*. | Mengatur ukuran layar uji proporsional ponsel modern (`1080x2400`, rasio `2.0`) dengan `addTearDown(tester.view.reset)`. | **Teratasi** — Seluruh interaksi ketuk pada form dan daftar berjalan akurat. |
+| **29 Okt 2026 / Pencarian** | Potensi hasil pencarian lama menimpa hasil ketikan terbaru saat pengguna mengetik cepat | Operasi `Future` kueri SQLite bersifat asinkron; kueri sebelumnya bisa selesai belakangan (*race condition*). | Menambahkan penghitung token permintaan (`_permintaan`) pada `CatatanViewModel.muatCatatan()` dan mengabaikan respons usang bila `token != _permintaan`. | **Teratasi** — Daftar hasil pencarian selalu konsisten dengan ketikan terakhir. |
+| **30 Okt 2026 / Skema v3** | Penambahan tabel ke-3 (`kategori`) serta kolom `favorit` dan `topik` pada aplikasi yang sudah memiliki database versi sebelumnya | Jika hanya mengubah `CREATE TABLE` pada `onCreate`, perangkat yang sudah memasang versi lama tidak akan memiliki tabel/kolom baru (`DatabaseException: no such table/column`). | Menaikkan versi DB ke `3` dan mengimplementasikan migrasi bertahap di `_onUpgrade` (`oldVersion < 2` dan `oldVersion < 3`) dengan `ALTER TABLE` + seed kategori awal tanpa menghapus data lama. | **Teratasi** — Dibuktikan lewat tes otomatis `database_migrasi_test.dart` (`v1 → v3`). |
 
 ---
 
-## 6. Laporan Refleksi Individual
+## 7. Refleksi Individual (Bab 8.3 Workbook)
 
-Dalam menyelesaikan proyek praktikum **StudyLog**, beberapa pembelajaran kunci yang diperoleh antara lain:
-1. **Pemisahan State dan UI:** Mengisolasi logika bisnis dari tampilan widget ke dalam `ViewModel` (`ChangeNotifier`) membuat kode jauh lebih bersih, terstruktur, dan mudah diuji secara independen tanpa ketergantungan UI yang rumit.
-2. **Persistensi Data SQLite:** Memahami siklus hidup data (*lifecycle*) antara data sementara di memori (RAM) dengan data permanen di penyimpanan lokal (`sqflite`). Penggunaan pola *Repository* mempermudah abstraksi kueri SQL sehingga komponen UI tidak perlu mengetahui sintaks SQL langsung.
-3. **Penerapan Relasi & Pemecahan Masalah Nyata:** Mengintegrasikan jadwal kuliah malam kelas IFB5J ke dalam database dan menghadirkan fitur *Auto-Detect Kuliah Aktif* memberikan pengalaman langsung bagaimana aplikasi mobile dapat menyelesaikan kendala nyata pengguna (efisiensi waktu saat perkuliahan berlangsung).
+### 1. Apa perbedaan `setState` dan `ChangeNotifier` yang Anda amati dalam praktik?
+**Jawaban:**  
+`setState` mengelola *ephemeral/local state* yang hanya dibutuhkan di dalam satu `StatefulWidget` saja (misalnya status tombol `_menyimpan` atau visibilitas tombol hapus teks pencarian). Sebaliknya, `ChangeNotifier` (yang didistribusikan melalui `Provider` dan dibaca oleh `Consumer`/`context.watch`) mengelola *app/shared state* di luar pohon widget sehingga perubahan data dari `FormCatatanPage` atau `DetailCatatanPage` otomatis memberi tahu (`notifyListeners()`) `DaftarCatatanPage` dan `BerandaPage` tanpa harus mengoper callback berlapis-lapis antarhalaman.
+
+### 2. Apa fungsi `Navigator.push` dan `Navigator.pop` pada alur aplikasi?
+**Jawaban:**  
+`Navigator` mengelola tumpukan halaman (*back stack* dengan prinsip LIFO — *Last In, First Out*). `Navigator.push` menempatkan route halaman baru di puncak tumpukan (misalnya `Beranda → Daftar → Detail → Form Ubah`), sedangkan `Navigator.pop` menutup halaman teratas dan mengembalikan pengguna tepat ke halaman sebelumnya (misalnya selesai menyimpan di Form kembali ke Detail/Daftar, atau menekan kembali dari Detail kembali ke Daftar, bukan mengulang aplikasi dari Beranda).
+
+### 3. Mengapa `ChangeNotifier` tidak otomatis membuat data tetap ada setelah restart penuh?
+**Jawaban:**  
+Karena objek `ChangeNotifier` beserta koleksi `List<Catatan>` di dalamnya hanya hidup di memori volatil (RAM) selama proses aplikasi berjalan. Saat pengguna melakukan *force stop* atau sistem operasi mematikan proses aplikasi, seluruh isi RAM aplikasi dihapus. Agar data bertahan melampaui siklus hidup proses aplikasi, perubahan state harus ditulis ke penyimpanan persisten pada perangkat (berkas database SQLite `studylog.db`) dan dimuat ulang saat aplikasi kembali dijalankan.
+
+### 4. Apa tanggung jawab `DatabaseHelper` dibanding `Repository` dan `ViewModel`?
+**Jawaban:**  
+- **`DatabaseHelper`:** Bertanggung jawab murni pada infrastruktur koneksi SQLite: menentukan lokasi file `studylog.db`, mengaktifkan `PRAGMA foreign_keys = ON`, membuat tabel awal (`onCreate`), melakukan migrasi versi skema (`onUpgrade` v1→v2→v3), serta mengisi data awal (*seeding* jadwal & kategori).
+- **`Repository` (`CatatanRepository`, `JadwalRepository`, `KategoriRepository`):** Menyediakan antarmuka akses data bersih berbahasa domain objek Dart (`Catatan`, `Jadwal`, `Kategori`), menerjemahkan operasi CRUD/filter/pencarian menjadi query SQL berparameter (`whereArgs`) yang aman, dan mengonversi `Map` ke model lewat `fromMap`/`toMap`.
+- **`ViewModel` (`CatatanViewModel`, `JadwalViewModel`, `KategoriViewModel`):** Menjembatani tampilan UI dengan Repository, mengelola status pemuatan (`isLoading`), pesan kesalahan (`error`), state filter/urutan aktif, dan memanggil `notifyListeners()` agar UI membangun ulang tampilan saat data berubah.
+
+### 5. Bug paling sulit apa yang ditemukan, bagaimana Anda membuktikan perbaikannya?
+**Jawaban:**  
+Masalah paling menantang adalah menjaga kompatibilitas migrasi skema database SQLite dari satu tabel dasar (`v1`) ke dua tabel (`v2`) hingga tiga tabel relasional (`v3`: `jadwal`, `kategori`, `catatan`) tanpa mengorbankan catatan lama milik pengguna, serta mengisolasi inisialisasi `databaseFactory` agar pengujian widget dan pengujian SQLite FFI sama-sama dapat berjalan otomatis. Perbaikannya dibuktikan melalui pengujian terotomatisasi pada `test/database_migrasi_test.dart` yang secara eksplisit membangun database versi 1 di disk sementara, menyisipkan catatan lama, lalu membukanya melalui `DatabaseHelper` versi 3 dan memverifikasi bahwa catatan lama tetap utuh sekaligus otomatis tertaut ke `jadwal_id` dan `kategori_id` yang tepat.
+
+### 6. Apa kontribusi kode dan pengujian yang paling jelas menunjukkan peran Anda?
+**Jawaban:**  
+Merancang dan mengimplementasikan keseluruhan arsitektur berlapis aplikasi **StudyLog** dari tahap M1 hingga M3 beserta perluasan PjBL 3 tabel relasional, khususnya fitur kontekstual **"Catat Sekarang"** (`lib/utils/status_kuliah.dart`, `lib/viewmodels/jadwal_view_model.dart`, `lib/screens/beranda_page.dart`, dan `lib/screens/form_catatan_page.dart`) yang mencocokkan waktu perangkat dengan jadwal kuliah kelas IFB5J secara otomatis, ditambah rangkaian pengujian otomatis menyeluruh (model, repository SQLite FFI, migrasi skema antarversi, logika jadwal, dan alur penuh widget CRUD).
