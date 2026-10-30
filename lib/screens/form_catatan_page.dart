@@ -4,11 +4,12 @@ import 'package:provider/provider.dart';
 import '../models/catatan.dart';
 import '../models/jadwal.dart';
 import '../utils/format.dart';
-import '../viewmodels/catatan_viewmodel.dart';
-import '../viewmodels/jadwal_viewmodel.dart';
+import '../viewmodels/catatan_view_model.dart';
+import '../viewmodels/jadwal_view_model.dart';
+import '../viewmodels/kategori_view_model.dart';
 
 /// Form tambah / ubah catatan.
-class FormCatatanScreen extends StatefulWidget {
+class FormCatatanPage extends StatefulWidget {
   /// Jika diisi, form berada pada mode ubah.
   final Catatan? catatan;
 
@@ -16,23 +17,26 @@ class FormCatatanScreen extends StatefulWidget {
   /// dan kursor langsung berada di kolom isi catatan.
   final Jadwal? jadwal;
 
-  const FormCatatanScreen({super.key, this.catatan, this.jadwal});
+  const FormCatatanPage({super.key, this.catatan, this.jadwal});
 
   @override
-  State<FormCatatanScreen> createState() => _FormCatatanScreenState();
+  State<FormCatatanPage> createState() => _FormCatatanPageState();
 }
 
-class _FormCatatanScreenState extends State<FormCatatanScreen> {
+class _FormCatatanPageState extends State<FormCatatanPage> {
   /// Nilai dropdown untuk mata kuliah di luar jadwal.
   static const _lainnya = -1;
 
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _mataKuliahController;
   late final TextEditingController _judulController;
+  late final TextEditingController _topikController;
   late final TextEditingController _isiController;
 
   int? _jadwalId;
+  int? _kategoriId;
   bool _menyimpan = false;
+  bool _tersimpan = false;
 
   bool get _modeUbah => widget.catatan != null;
   bool get _modeCepat => widget.jadwal != null;
@@ -48,6 +52,7 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
           c?.judul ??
           (j != null ? 'Pertemuan ${formatTanggalSaja(DateTime.now())}' : ''),
     );
+    _topikController = TextEditingController(text: c?.topik ?? '');
     _isiController = TextEditingController(text: c?.isi ?? '');
 
     if (j != null) {
@@ -55,12 +60,14 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
     } else if (c != null) {
       _jadwalId = c.jadwalId ?? _lainnya;
     }
+    _kategoriId = c?.kategoriId;
   }
 
   @override
   void dispose() {
     _mataKuliahController.dispose();
     _judulController.dispose();
+    _topikController.dispose();
     _isiController.dispose();
     super.dispose();
   }
@@ -72,24 +79,38 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
     return null;
   }
 
+  String? _validasiTopik(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    if (value.trim().length < 3) {
+      return 'Topik minimal 3 karakter';
+    }
+    return null;
+  }
+
   Future<void> _simpan() async {
     if (_menyimpan || !_formKey.currentState!.validate()) return;
     setState(() => _menyimpan = true);
     final vm = context.read<CatatanViewModel>();
     final jadwal = context.read<JadwalViewModel>().cariById(_jadwalId);
+    final kategoriVm = context.read<KategoriViewModel>();
+    final kategoriId = _kategoriId ?? kategoriVm.defaultKategori?.id;
+
     final data = Catatan(
       id: widget.catatan?.id,
       mataKuliah: jadwal?.nama ?? _mataKuliahController.text.trim(),
       judul: _judulController.text.trim(),
+      topik: _topikController.text.trim(),
       isi: _isiController.text.trim(),
       tanggal: widget.catatan?.tanggal ?? DateTime.now(),
+      favorit: widget.catatan?.favorit ?? false,
       jadwalId: jadwal?.id,
+      kategoriId: kategoriId,
     );
     try {
       if (_modeUbah) {
-        await vm.ubah(data);
+        await vm.ubahCatatan(data);
       } else {
-        await vm.tambah(data);
+        await vm.tambahCatatan(data);
       }
     } catch (e) {
       if (!mounted) return;
@@ -99,17 +120,21 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
       return;
     }
     if (!mounted) return;
+    setState(() => _tersimpan = true);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(_modeUbah ? 'Catatan diperbarui' : 'Catatan disimpan'),
       ),
     );
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
 
   @override
   Widget build(BuildContext context) {
     final daftarJadwal = context.watch<JadwalViewModel>().mataKuliahUnik;
+    final kategoriVm = context.watch<KategoriViewModel>();
+    final daftarKategori = kategoriVm.items;
+    final kategoriAktif = _kategoriId ?? kategoriVm.defaultKategori?.id;
     final j = widget.jadwal;
 
     return Scaffold(
@@ -169,6 +194,23 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
                     ),
                   ],
                 ],
+                if (daftarKategori.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<int>(
+                    key: const Key('dropdown_kategori'),
+                    initialValue: kategoriAktif,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Kategori / Tag',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: [
+                      for (final k in daftarKategori)
+                        DropdownMenuItem(value: k.id, child: Text(k.nama)),
+                    ],
+                    onChanged: (v) => setState(() => _kategoriId = v),
+                  ),
+                ],
                 const SizedBox(height: 12),
                 TextFormField(
                   key: const Key('field_judul'),
@@ -178,6 +220,16 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
                     border: OutlineInputBorder(),
                   ),
                   validator: (v) => _wajibDiisi(v, 'Judul'),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  key: const Key('field_topik'),
+                  controller: _topikController,
+                  decoration: const InputDecoration(
+                    labelText: 'Topik (opsional, min. 3 karakter)',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: _validasiTopik,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
@@ -197,8 +249,15 @@ class _FormCatatanScreenState extends State<FormCatatanScreen> {
                 ),
                 const SizedBox(height: 16),
                 FilledButton.icon(
-                  icon: const Icon(Icons.save),
-                  label: const Text('Simpan'),
+                  style: _tersimpan
+                      ? FilledButton.styleFrom(backgroundColor: Colors.green)
+                      : null,
+                  icon: Icon(_tersimpan ? Icons.check_circle : Icons.save),
+                  label: Text(
+                    _menyimpan
+                        ? 'Menyimpan...'
+                        : (_tersimpan ? 'Tersimpan' : 'Simpan'),
+                  ),
                   onPressed: _menyimpan ? null : _simpan,
                 ),
               ],

@@ -3,30 +3,43 @@ import 'package:provider/provider.dart';
 
 import '../models/jadwal.dart';
 import '../utils/format.dart';
-import '../viewmodels/catatan_viewmodel.dart';
-import '../viewmodels/jadwal_viewmodel.dart';
-import 'daftar_catatan_screen.dart';
-import 'form_catatan_screen.dart';
+import '../viewmodels/catatan_view_model.dart';
+import '../viewmodels/jadwal_view_model.dart';
+import 'daftar_catatan_page.dart';
+import 'form_catatan_page.dart';
+import 'tentang_page.dart';
 
-class BerandaScreen extends StatelessWidget {
-  const BerandaScreen({super.key});
+class BerandaPage extends StatelessWidget {
+  const BerandaPage({super.key});
 
   void _catat(BuildContext context, Jadwal j) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => FormCatatanScreen(jadwal: j)),
+      MaterialPageRoute(builder: (_) => FormCatatanPage(jadwal: j)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final jumlah = context.watch<CatatanViewModel>().items.length;
     final jadwalVm = context.watch<JadwalViewModel>();
     final status = jadwalVm.status;
     final aktif = status.aktif;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('StudyLog')),
+      appBar: AppBar(
+        title: const Text('StudyLog'),
+        actions: [
+          IconButton(
+            key: const Key('tombol_tentang'),
+            tooltip: 'Tentang Aplikasi',
+            icon: const Icon(Icons.info_outline),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const TentangPage()),
+            ),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -60,13 +73,18 @@ class BerandaScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.menu_book),
-              title: const Text('Total Catatan'),
-              trailing: Text(
-                '$jumlah',
-                style: Theme.of(context).textTheme.headlineSmall,
+          Consumer<CatatanViewModel>(
+            builder: (context, vm, _) => Card(
+              child: ListTile(
+                leading: const Icon(Icons.menu_book),
+                title: const Text('Total Catatan'),
+                subtitle: vm.jumlahFavorit > 0
+                    ? Text('${vm.jumlahFavorit} ditandai favorit')
+                    : null,
+                trailing: Text(
+                  '${vm.catatan.length}',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
               ),
             ),
           ),
@@ -76,7 +94,7 @@ class BerandaScreen extends StatelessWidget {
             label: const Text('Catatan Baru'),
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const FormCatatanScreen()),
+              MaterialPageRoute(builder: (_) => const FormCatatanPage()),
             ),
           ),
           const SizedBox(height: 8),
@@ -85,7 +103,7 @@ class BerandaScreen extends StatelessWidget {
             label: const Text('Lihat Daftar Catatan'),
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const DaftarCatatanScreen()),
+              MaterialPageRoute(builder: (_) => const DaftarCatatanPage()),
             ),
           ),
         ],

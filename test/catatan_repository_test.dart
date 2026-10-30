@@ -35,7 +35,9 @@ void main() {
     expect(semua.first.tanggal, DateTime(2026, 10, 28, 20, 30));
   });
 
-  test('Update', () async {
+  test('Update dan validasi ID kosong', () async {
+    expect(() => repo.ubah(contoh()), throwsArgumentError);
+
     final id = await repo.tambah(contoh());
     final c = (await repo.cariById(id))!;
     await repo.ubah(c.copyWith(judul: 'Vigenere'));
@@ -48,8 +50,11 @@ void main() {
     expect(await repo.semua(), isEmpty);
   });
 
-  test('Cari berdasarkan kata kunci dan jadwal', () async {
-    await repo.tambah(contoh('Caesar Cipher').copyWith(jadwalId: () => 5));
+  test('Cari, filter jadwal/kategori/favorit, dan urutkan', () async {
+    final id1 = await repo.tambah(
+      contoh('Caesar Cipher')
+          .copyWith(jadwalId: () => 5, kategoriId: () => 1, topik: 'Klasik'),
+    );
     await repo.tambah(
       Catatan(
         mataKuliah: 'Jaringan Nirkabel',
@@ -57,16 +62,25 @@ void main() {
         isi: 'Standar IEEE',
         tanggal: DateTime(2026, 10, 30, 19),
         jadwalId: 7,
+        kategoriId: 2,
       ),
     );
+    await repo.setFavorit(id1, true);
 
     expect(
       (await repo.cari(kataKunci: 'caesar')).single.judul,
       'Caesar Cipher',
     );
-    expect((await repo.cari(kataKunci: 'ieee')).single.judul, 'WiFi 802.11');
+    expect(
+      (await repo.cari(kataKunci: 'klasik')).single.judul,
+      'Caesar Cipher',
+    );
     expect((await repo.cari(jadwalId: 7)).single.judul, 'WiFi 802.11');
-    expect(await repo.cari(kataKunci: 'caesar', jadwalId: 7), isEmpty);
-    expect(await repo.cari(), hasLength(2));
+    expect((await repo.cari(kategoriId: 2)).single.judul, 'WiFi 802.11');
+    expect((await repo.cari(hanyaFavorit: true)).single.id, id1);
+
+    final terlama = await repo.semua(terbaru: false);
+    expect(terlama.first.judul, 'Caesar Cipher');
+    expect(terlama.last.judul, 'WiFi 802.11');
   });
 }

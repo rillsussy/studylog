@@ -6,7 +6,7 @@ import '../data/jadwal_repository.dart';
 import '../models/jadwal.dart';
 import '../utils/status_kuliah.dart';
 
-/// ViewModel jadwal: memuat jadwal dan memperbarui status kuliah tiap menit.
+/// ViewModel jadwal: memuat jadwal dan memperbarui status kuliah berkala.
 class JadwalViewModel extends ChangeNotifier {
   final JadwalRepository _repo;
   final DateTime Function() _jam;
