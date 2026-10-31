@@ -146,4 +146,4 @@ flutter build apk --debug
 |:--:|---|:--:|---|
 | 1 | **Ryanda Hermawan** | `2411068` | Perancangan skema SQLite 3 tabel relasional (`jadwal`, `kategori`, `catatan`), migrasi database `v1 → v2 → v3`, fitur deteksi jadwal aktif *Catat Sekarang*, dan pengelolaan repository Git. |
 | 2 | **Dewi Nofitta Sari** | `2411065` | Pengembangan antarmuka multi-layar (`Beranda`, `Daftar`, `Form`, `Detail`, `Tentang`), validasi form input, pencarian/filter/pengurutan/favorit, serta manajemen state `Provider` & `Consumer`. |
-| 3 | **Bintang Sahda Rayyu Sonora** | `2411025` | Penyusunan pengujian otomatis (unit, repository SQLite FFI, migrasi, widget), pengujian persistensi di perangkat Android fisik, perekaman video demo CRUD & restart, serta penyusunan dokumentasi Workbook. |
+| 3 | **Bintang Sahda Rayyu Sonora** | `2411025` | Penyusunan pengujian otomatis (unit, repository SQLite FFI, migrasi, widget), pengujian persistensi di perangkat Android fisik, serta penyusunan dokumentasi Workbook. |
