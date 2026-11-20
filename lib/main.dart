@@ -6,6 +6,7 @@ import 'data/database_helper.dart';
 import 'data/jadwal_repository.dart';
 import 'data/kategori_repository.dart';
 import 'screens/beranda_page.dart';
+import 'theme/app_theme.dart';
 import 'viewmodels/catatan_view_model.dart';
 import 'viewmodels/jadwal_view_model.dart';
 import 'viewmodels/kategori_view_model.dart';
@@ -40,10 +41,7 @@ class StudyLogApp extends StatelessWidget {
     return MaterialApp(
       title: 'StudyLog',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF4158D0)),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
       home: const BerandaPage(),
     );
   }

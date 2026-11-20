@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../models/catatan.dart';
+import '../theme/app_theme.dart';
 import '../utils/format.dart';
 import '../viewmodels/catatan_view_model.dart';
 import '../viewmodels/jadwal_view_model.dart';
@@ -16,20 +17,66 @@ class DetailCatatanPage extends StatelessWidget {
   Future<void> _konfirmasiHapus(
     BuildContext context,
     CatatanViewModel vm,
+    String judulCatatan,
   ) async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Hapus catatan?'),
-        content: const Text('Catatan yang dihapus tidak dapat dikembalikan.'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              decoration: const BoxDecoration(
+                color: AppTheme.errorContainer,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.delete_forever,
+                color: AppTheme.error,
+                size: 32,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Hapus Catatan Ini?',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              "Catatan '$judulCatatan' akan dihapus secara permanen dari penyimpanan dan tidak dapat dipulihkan.",
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppTheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Batal'),
+            child: const Text(
+              'Batal',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
-          FilledButton(
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppTheme.error,
+              foregroundColor: Colors.white,
+            ),
+            icon: const Icon(Icons.delete, size: 16),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Hapus'),
+            label: const Text('Hapus'),
           ),
         ],
       ),
@@ -87,32 +134,36 @@ class DetailCatatanPage extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Detail Catatan'),
+            title: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppTheme.secondaryContainer,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.storage, size: 14, color: AppTheme.primary),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      c.mataKuliah,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.onSecondaryFixedVariant,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             actions: [
               IconButton(
-                key: const Key('tombol_favorit'),
-                tooltip: c.favorit ? 'Hapus favorit' : 'Tandai favorit',
-                icon: Icon(
-                  c.favorit ? Icons.star : Icons.star_border,
-                  color: c.favorit ? Colors.amber.shade700 : null,
-                ),
-                onPressed: () => vm.toggleFavorit(c),
-              ),
-              IconButton(
-                key: const Key('tombol_salin'),
-                tooltip: 'Salin Teks Catatan',
-                icon: const Icon(Icons.copy),
-                onPressed: () => _salinCatatan(
-                  context,
-                  c,
-                  namaKategori: kategori?.nama,
-                  infoJadwal: infoJadwal,
-                ),
-              ),
-              IconButton(
                 key: const Key('tombol_ubah'),
-                tooltip: 'Ubah',
-                icon: const Icon(Icons.edit),
+                tooltip: 'Edit Catatan',
+                icon: const Icon(Icons.edit_outlined),
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -121,54 +172,317 @@ class DetailCatatanPage extends StatelessWidget {
                 ),
               ),
               IconButton(
+                key: const Key('tombol_favorit'),
+                tooltip: c.favorit ? 'Hapus favorit' : 'Simpan Bintang',
+                icon: Icon(
+                  c.favorit ? Icons.star : Icons.star_border,
+                  color: c.favorit ? Colors.amber.shade700 : null,
+                ),
+                onPressed: () => vm.toggleFavorit(c),
+              ),
+              IconButton(
+                key: const Key('tombol_salin'),
+                tooltip: 'Bagikan & Salin Teks',
+                icon: const Icon(Icons.share_outlined),
+                onPressed: () => _salinCatatan(
+                  context,
+                  c,
+                  namaKategori: kategori?.nama,
+                  infoJadwal: infoJadwal,
+                ),
+              ),
+              IconButton(
                 key: const Key('tombol_hapus'),
                 tooltip: 'Hapus',
-                icon: const Icon(Icons.delete),
-                onPressed: () => _konfirmasiHapus(context, vm),
+                icon: const Icon(Icons.delete_outline, color: AppTheme.error),
+                onPressed: () => _konfirmasiHapus(context, vm, c.judul),
               ),
             ],
           ),
           body: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
             children: [
+              // Academic Badges Cluster
               Wrap(
                 spacing: 8,
-                runSpacing: 4,
+                runSpacing: 6,
                 children: [
-                  Chip(label: Text(c.mataKuliah)),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceContainerHigh,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.school,
+                          size: 13,
+                          color: AppTheme.onSurfaceVariant,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'Semester 5',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   if (kategori != null)
-                    Chip(
-                      avatar: CircleAvatar(
-                        backgroundColor: Color(kategori.warna),
-                        radius: 6,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
                       ),
-                      label: Text(kategori.nama),
+                      decoration: BoxDecoration(
+                        color: Color(kategori.warna).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Color(kategori.warna),
+                            radius: 4,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            kategori.nama,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Color(kategori.warna),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (c.favorit)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade50,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.amber.shade300),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.star,
+                            size: 13,
+                            color: Colors.amber.shade800,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Favorit',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.amber.shade900,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                 ],
               ),
-              if (jadwal != null)
-                Text(
-                  '${jadwal.kode} • ${jadwal.labelHari} ${jadwal.labelJam} • '
-                  '${jadwal.ruang}\n${jadwal.dosen}',
-                  style: Theme.of(context).textTheme.bodySmall,
+              const SizedBox(height: 12),
+
+              // Headline Title
+              Text(
+                c.judul,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.onSurface,
+                  letterSpacing: -0.2,
                 ),
-              const SizedBox(height: 8),
-              Text(c.judul, style: Theme.of(context).textTheme.headlineSmall),
+              ),
+              const SizedBox(height: 10),
+
+              // Metadata Ribbon Box
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppTheme.surfaceContainerHigh),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.calendar_today,
+                          size: 16,
+                          color: AppTheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          formatTanggal(c.tanggal),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (jadwal != null) ...[
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Divider(height: 1),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.meeting_room,
+                            size: 16,
+                            color: AppTheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Ruang: ${jadwal.ruang}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          const Icon(
+                            Icons.person,
+                            size: 16,
+                            color: AppTheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              jadwal.dosen,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppTheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
+              // Topic Highlight (if present)
               if (c.topik.trim().isNotEmpty) ...[
-                const SizedBox(height: 4),
-                Text(
-                  'Topik: ${c.topik}',
-                  style: Theme.of(context).textTheme.titleSmall,
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.secondaryContainer.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppTheme.secondaryContainer),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.auto_stories,
+                        size: 18,
+                        color: AppTheme.primary,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Topik Bahasan',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: AppTheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              c.topik,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
-              const SizedBox(height: 4),
-              Text(
-                formatTanggal(c.tanggal),
-                style: Theme.of(context).textTheme.bodySmall,
+
+              const SizedBox(height: 16),
+
+              // Core Note Content (Card with elevation & selectable text)
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppTheme.surfaceContainerLowest,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppTheme.surfaceContainerHigh),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(Icons.notes, size: 18, color: AppTheme.primary),
+                        SizedBox(width: 8),
+                        Text(
+                          'Catatan Kuliah',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    SelectableText(
+                      c.isi,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        height: 1.6,
+                        color: AppTheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const Divider(height: 32),
-              SelectableText(c.isi),
             ],
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            tooltip: 'Ubah Catatan',
+            icon: const Icon(Icons.edit),
+            label: const Text('Ubah Catatan'),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => FormCatatanPage(catatan: c)),
+            ),
           ),
         );
       },

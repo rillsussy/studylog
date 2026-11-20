@@ -3,18 +3,15 @@ import 'package:provider/provider.dart';
 
 import '../models/catatan.dart';
 import '../models/jadwal.dart';
+import '../theme/app_theme.dart';
 import '../utils/format.dart';
 import '../viewmodels/catatan_view_model.dart';
 import '../viewmodels/jadwal_view_model.dart';
 import '../viewmodels/kategori_view_model.dart';
 
-/// Form tambah / ubah catatan.
+/// Form tambah / ubah catatan sesuai spesifikasi Catat Cepat.
 class FormCatatanPage extends StatefulWidget {
-  /// Jika diisi, form berada pada mode ubah.
   final Catatan? catatan;
-
-  /// Jika diisi (mode "Catat Sekarang"), mata kuliah langsung terpilih
-  /// dan kursor langsung berada di kolom isi catatan.
   final Jadwal? jadwal;
 
   const FormCatatanPage({super.key, this.catatan, this.jadwal});
@@ -24,7 +21,6 @@ class FormCatatanPage extends StatefulWidget {
 }
 
 class _FormCatatanPageState extends State<FormCatatanPage> {
-  /// Nilai dropdown untuk mata kuliah di luar jadwal.
   static const _lainnya = -1;
 
   final _formKey = GlobalKey<FormState>();
@@ -61,6 +57,10 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
       _jadwalId = c.jadwalId ?? _lainnya;
     }
     _kategoriId = c?.kategoriId;
+
+    _isiController.addListener(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
@@ -86,6 +86,14 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
     }
     return null;
   }
+
+  int get _jumlahKata {
+    final t = _isiController.text.trim();
+    if (t.isEmpty) return 0;
+    return t.split(RegExp(r'\s+')).length;
+  }
+
+  int get _jumlahKarakter => _isiController.text.length;
 
   Future<void> _simpan() async {
     if (_menyimpan || !_formKey.currentState!.validate()) return;
@@ -135,26 +143,174 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
     final kategoriVm = context.watch<KategoriViewModel>();
     final daftarKategori = kategoriVm.items;
     final kategoriAktif = _kategoriId ?? kategoriVm.defaultKategori?.id;
-    final j = widget.jadwal;
 
     return Scaffold(
-      appBar: AppBar(title: Text(_modeUbah ? 'Ubah Catatan' : 'Catatan Baru')),
+      appBar: AppBar(
+        title: Text(
+          _modeUbah
+              ? 'Ubah Catatan'
+              : (_modeCepat ? 'Catat Cepat' : 'Catatan Baru'),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.cloud_done,
+                  size: 16,
+                  color: AppTheme.tertiaryContainer,
+                ),
+                SizedBox(width: 4),
+                Text(
+                  'Tersimpan di Cloud',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (_modeCepat)
-                  Card(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    child: ListTile(
-                      leading: const Icon(Icons.school),
-                      title: Text(j!.nama),
-                      subtitle: Text('${j.labelJam} • ${j.ruang}\n${j.dosen}'),
-                      isThreeLine: true,
+                // Course Banner Card
+                if (_modeCepat && widget.jadwal != null)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceContainerLowest,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppTheme.surfaceContainerHigh),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primary.withValues(alpha: 0.04),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            left: BorderSide(
+                              color: AppTheme.primaryContainer,
+                              width: 4,
+                            ),
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(14),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 2,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.secondaryContainer,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          'KULIAH AKTIF',
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppTheme.primary,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'Smt 5 • ${widget.jadwal!.sks} SKS',
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          color: AppTheme.onSurfaceVariant,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    widget.jadwal!.nama,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.onSurface,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.meeting_room,
+                                        size: 14,
+                                        color: AppTheme.primary,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        widget.jadwal!.ruang,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: AppTheme.onSurfaceVariant,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      const Icon(
+                                        Icons.person,
+                                        size: 14,
+                                        color: AppTheme.primary,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Text(
+                                          widget.jadwal!.dosen,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: AppTheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(
+                              Icons.swap_horiz,
+                              color: AppTheme.onSurfaceVariant,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   )
                 else ...[
@@ -164,7 +320,7 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
                     isExpanded: true,
                     decoration: const InputDecoration(
                       labelText: 'Mata Kuliah',
-                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.school_outlined),
                     ),
                     items: [
                       for (final jd in daftarJadwal)
@@ -188,77 +344,150 @@ class _FormCatatanPageState extends State<FormCatatanPage> {
                       controller: _mataKuliahController,
                       decoration: const InputDecoration(
                         labelText: 'Nama Mata Kuliah',
-                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.book_outlined),
                       ),
                       validator: (v) => _wajibDiisi(v, 'Nama mata kuliah'),
                     ),
                   ],
-                ],
-                if (daftarKategori.isNotEmpty) ...[
                   const SizedBox(height: 12),
+                ],
+
+                // Dropdown Kategori
+                if (daftarKategori.isNotEmpty) ...[
                   DropdownButtonFormField<int>(
                     key: const Key('dropdown_kategori'),
                     initialValue: kategoriAktif,
                     isExpanded: true,
                     decoration: const InputDecoration(
                       labelText: 'Kategori / Tag',
-                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.label_outlined),
                     ),
                     items: [
                       for (final k in daftarKategori)
-                        DropdownMenuItem(value: k.id, child: Text(k.nama)),
+                        DropdownMenuItem(
+                          value: k.id,
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Color(k.warna),
+                                radius: 6,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(k.nama),
+                            ],
+                          ),
+                        ),
                     ],
                     onChanged: (v) => setState(() => _kategoriId = v),
                   ),
+                  const SizedBox(height: 12),
                 ],
-                const SizedBox(height: 12),
+
+                // Note Title Field
                 TextFormField(
                   key: const Key('field_judul'),
                   controller: _judulController,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                   decoration: const InputDecoration(
                     labelText: 'Judul Catatan',
-                    border: OutlineInputBorder(),
+                    hintText: 'Judul catatan perkuliahan...',
+                    prefixIcon: Icon(Icons.title),
                   ),
                   validator: (v) => _wajibDiisi(v, 'Judul'),
                 ),
                 const SizedBox(height: 12),
+
+                // Topic Field
                 TextFormField(
                   key: const Key('field_topik'),
                   controller: _topikController,
                   decoration: const InputDecoration(
                     labelText: 'Topik (opsional, min. 3 karakter)',
-                    border: OutlineInputBorder(),
+                    hintText: 'Contoh: Normalisasi 3NF & BCNF',
+                    prefixIcon: Icon(Icons.tag),
                   ),
                   validator: _validasiTopik,
                 ),
                 const SizedBox(height: 12),
+
+                // Expansive Writing Area
                 TextFormField(
                   key: const Key('field_isi'),
                   controller: _isiController,
                   autofocus: _modeCepat,
                   minLines: 8,
-                  maxLines: 20,
+                  maxLines: 22,
                   keyboardType: TextInputType.multiline,
                   textCapitalization: TextCapitalization.sentences,
+                  style: const TextStyle(fontSize: 15, height: 1.4),
                   decoration: const InputDecoration(
                     labelText: 'Isi Catatan',
+                    hintText:
+                        'Lanjutkan mengetik poin pembahasan kuliah di sini...',
                     alignLabelWithHint: true,
-                    border: OutlineInputBorder(),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.only(bottom: 120),
+                      child: Icon(Icons.notes),
+                    ),
                   ),
                   validator: (v) => _wajibDiisi(v, 'Isi catatan'),
                 ),
+
                 const SizedBox(height: 16),
-                FilledButton.icon(
-                  style: _tersimpan
-                      ? FilledButton.styleFrom(backgroundColor: Colors.green)
-                      : null,
-                  icon: Icon(_tersimpan ? Icons.check_circle : Icons.save),
-                  label: Text(
-                    _menyimpan
-                        ? 'Menyimpan...'
-                        : (_tersimpan ? 'Tersimpan' : 'Simpan'),
+
+                // Word & Character Counter row
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.text_fields,
+                      size: 16,
+                      color: AppTheme.outline,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '$_jumlahKata kata • $_jumlahKarakter karakter',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 14),
+
+                // High-Contrast Save Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: _tersimpan
+                          ? Colors.green
+                          : AppTheme.primaryContainer,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                    icon: Icon(
+                      _tersimpan ? Icons.check_circle : Icons.save,
+                      size: 20,
+                    ),
+                    label: Text(
+                      _menyimpan
+                          ? 'Menyimpan...'
+                          : (_tersimpan ? 'Tersimpan' : 'Simpan'),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                    onPressed: _menyimpan ? null : _simpan,
                   ),
-                  onPressed: _menyimpan ? null : _simpan,
                 ),
               ],
             ),

@@ -1,0 +1,284 @@
+<!-- StudyLog - Tulis Catatan -->
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>StudyLog - Catat Cepat</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface": "#191c1e",
+            "outline-variant": "#c6c5d4",
+            "surface-tint": "#4755b6",
+            "tertiary": "#003b26",
+            "inverse-surface": "#2d3133",
+            "on-surface-variant": "#454652",
+            "on-secondary-fixed-variant": "#3a485b",
+            "primary": "#142588",
+            "surface": "#f7f9fb",
+            "outline": "#767683",
+            "background": "#f7f9fb",
+            "on-secondary-fixed": "#0d1c2e",
+            "error": "#ba1a1a",
+            "on-tertiary-container": "#3bcf95",
+            "surface-variant": "#e0e3e5",
+            "surface-container-low": "#f2f4f6",
+            "on-tertiary": "#ffffff",
+            "primary-container": "#303f9f",
+            "on-error": "#ffffff",
+            "surface-container-high": "#e6e8ea",
+            "tertiary-fixed": "#6ffbbe",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-tertiary-fixed": "#002113",
+            "surface-container": "#eceef0",
+            "on-primary-fixed-variant": "#2d3c9c",
+            "secondary-container": "#d5e3fc",
+            "surface-container-highest": "#e0e3e5",
+            "secondary-fixed-dim": "#b9c7df",
+            "tertiary-fixed-dim": "#4edea3",
+            "inverse-primary": "#bbc3ff",
+            "error-container": "#ffdad6",
+            "inverse-on-surface": "#eff1f3",
+            "primary-fixed": "#dfe0ff",
+            "secondary-fixed": "#d5e3fc",
+            "on-primary": "#ffffff",
+            "on-secondary": "#ffffff",
+            "primary-fixed-dim": "#bbc3ff",
+            "tertiary-container": "#005438",
+            "secondary": "#515f74",
+            "on-primary-fixed": "#000d5f",
+            "surface-container-lowest": "#ffffff",
+            "surface-bright": "#f7f9fb",
+            "surface-dim": "#d8dadc",
+            "on-primary-container": "#aab4ff",
+            "on-background": "#191c1e",
+            "on-error-container": "#93000a",
+            "on-secondary-container": "#57657a"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "margin": "1rem",
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-md": ["Inter"],
+            "label-medium": ["Inter"],
+            "title-sm": ["Inter"],
+            "body-large": ["Inter"],
+            "title-lg": ["Inter"],
+            "title-medium": ["Inter"],
+            "label-large": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-medium": ["Inter"],
+            "label-sm": ["Inter"],
+            "display-lg": ["Inter"]
+          },
+          "fontSize": {
+            "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "0px", "fontWeight": "700"}],
+            "headline-sm": ["24px", {"lineHeight": "32px", "letterSpacing": "0px", "fontWeight": "600"}],
+            "headline-md": ["28px", {"lineHeight": "36px", "letterSpacing": "0px", "fontWeight": "600"}],
+            "label-medium": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "600"}],
+            "title-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "600"}],
+            "body-large": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+            "title-lg": ["22px", {"lineHeight": "28px", "letterSpacing": "0px", "fontWeight": "600"}],
+            "title-medium": ["16px", {"lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600"}],
+            "label-large": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "600"}],
+            "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.4px", "fontWeight": "400"}],
+            "body-medium": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}],
+            "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+            "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col font-body-medium text-body-medium selection:bg-secondary-container selection:text-primary">
+<!-- TOP APP BAR (FOCUSED TASK FLOW) -->
+<header class="sticky top-0 z-40 bg-surface-container-lowest/95 backdrop-blur-md shadow-sm">
+<div class="max-w-2xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+<!-- Back / Dismiss Action -->
+<div class="flex items-center gap-2">
+<button aria-label="Kembali" class="w-10 h-10 -ml-2 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<div>
+<h1 class="font-title-lg text-title-lg font-bold text-on-surface tracking-tight">Catat Cepat</h1>
+</div>
+</div>
+<!-- Trailing Action: Cloud Auto-save Status & Context Menu -->
+<div class="flex items-center gap-2">
+<div class="hidden xs:flex sm:flex items-center gap-1.5 bg-surface-container-low px-2.5 py-1 rounded-full text-secondary">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container" style="font-variation-settings: 'FILL' 1;">cloud_done</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Tersimpan di Cloud 19:48</span>
+</div>
+<div class="flex xs:hidden items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">cloud_done</span>
+</div>
+<button aria-label="Menu Opsi" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[22px]">more_vert</span>
+</button>
+</div>
+</div>
+</header>
+<!-- MAIN SCROLLABLE CONTENT CANVAS -->
+<main class="flex-1 w-full max-w-2xl mx-auto px-4 pt-3 pb-28">
+<!-- AUTO-SELECTED COURSE BANNER CARD -->
+<section class="mb-4">
+<div class="bg-surface-container-lowest rounded-2xl p-4 shadow-sm relative overflow-hidden border-l-4 border-l-primary-container">
+<div class="flex items-start justify-between gap-3">
+<div class="space-y-1.5">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm bg-secondary-container text-primary font-bold px-2 py-0.5 rounded-full">KULIAH AKTIF</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Smt 5 • 3 SKS</span>
+</div>
+<h2 class="font-title-medium text-title-medium font-bold text-on-surface">
+              Sistem Manajemen Basis Data (IFB5J)
+            </h2>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-on-surface-variant pt-0.5">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">meeting_room</span>
+<span class="font-body-sm text-body-sm font-medium">LAB B • FIKOM</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">person</span>
+<span class="font-body-sm text-body-sm font-medium">Dr. Ir. Hendra Saputra</span>
+</div>
+</div>
+</div>
+<button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">swap_horiz</span>
+</button>
+</div>
+</div>
+</section>
+<!-- WRITING CANVAS CONTAINER -->
+<div class="bg-surface-container-lowest rounded-2xl p-4 md:p-6 shadow-sm flex flex-col min-h-[580px]">
+<!-- TITLE INPUT FIELD -->
+<div class="mb-4">
+<input aria-label="Judul Catatan Kuliah" class="w-full bg-transparent border-0 border-b border-outline-variant/60 focus:border-primary focus:ring-0 px-0 pb-2.5 pt-1 font-title-lg text-title-lg font-bold text-on-surface placeholder:text-outline tracking-tight transition-colors" id="note-title" placeholder="Judul catatan perkuliahan..." type="text" value="Pertemuan 29 Okt 2026: Normalisasi 3NF &amp; BCNF">
+<div class="flex items-center justify-between pt-1.5 text-on-surface-variant">
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-primary">schedule</span>
+<span class="">Rabu, 29 Oktober 2026 • 19:30 WIB</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Versi v1.2</span>
+</div>
+</div>
+<!-- FORMATTING & TOOLBAR STRIP -->
+
+<!-- EXPANSIVE LECTURE WRITING TEXT AREA & CONTENT CANVAS -->
+<div class="flex-1 flex flex-col space-y-4">
+<!-- Editable Content Simulator with Realistic Lecture Notes -->
+<div class="space-y-3 font-body-large text-body-large text-on-surface leading-relaxed">
+<p class="text-on-surface">
+            Tujuan utama dekomposisi skema relasi adalah menghilangkan anomali redundansi, pembaruan (<span class="italic text-on-surface-variant">update anomalies</span>), dan penghapusan (<span class="italic text-on-surface-variant">deletion anomalies</span>).
+          </p>
+<h3 class="font-title-medium text-title-medium font-bold text-primary pt-1">
+            Syarat Boye-Codd Normal Form (BCNF):
+          </h3>
+<ul class="space-y-1.5 pl-1">
+<li class="flex items-start gap-2 text-on-surface">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="">Memenuhi seluruh kriteria bentuk normal ketiga (3NF).</span>
+</li>
+<li class="flex items-start gap-2 text-on-surface">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="">Untuk setiap ketergantungan fungsional non-trivial <code class="font-mono text-sm bg-surface-container-high px-1.5 py-0.5 rounded text-primary">X → Y</code>, maka determinan <code class="font-mono text-sm bg-surface-container-high px-1.5 py-0.5 rounded text-primary font-bold">X</code> wajib merupakan <em class="not-italic font-semibold text-primary">Super Key</em>.</span>
+</li>
+</ul>
+<!-- SQL Code Snippet Block -->
+<div class="rounded-xl overflow-hidden bg-inverse-surface text-inverse-on-surface my-3 shadow-inner">
+<div class="bg-inverse-surface/80 px-3.5 py-1.5 flex items-center justify-between border-b border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-error"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-fixed-dim"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed"></span>
+<span class="font-mono text-xs text-surface-variant pl-2">skema_dekomposisi.sql</span>
+</div>
+<button class="text-xs text-inverse-primary hover:underline flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[14px]">content_copy</span> Salin
+              </button>
+</div>
+<pre class="p-3.5 font-mono text-xs overflow-x-auto text-inverse-on-surface leading-5"><code><span class="text-tertiary-fixed font-bold">CREATE TABLE</span> Mahasiswa_Penasihat (
+  nim <span class="text-inverse-primary">VARCHAR</span>(10),
+  kode_prodi <span class="text-inverse-primary">VARCHAR</span>(5),
+  nip_dosen <span class="text-inverse-primary">VARCHAR</span>(18),
+  <span class="text-tertiary-fixed font-bold">PRIMARY KEY</span> (nim, kode_prodi),
+  <span class="text-tertiary-fixed font-bold">FOREIGN KEY</span> (nip_dosen) <span class="text-tertiary-fixed font-bold">REFERENCES</span> Dosen(nip)
+);</code></pre>
+</div>
+<!-- Key Takeaway / Lecturer Warning Callout Card -->
+<div class="p-3.5 rounded-xl bg-secondary-container/40 border-l-4 border-l-primary-container flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[22px] mt-0.5" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<div class="space-y-0.5">
+<span class="font-label-medium text-label-medium text-primary uppercase tracking-wider block">Catatan Penting Dosen</span>
+<p class="font-body-medium text-body-medium text-on-surface font-medium">
+                Jangan lupa tugas perancangan ERD ke skema relasi dikumpulkan pekan depan via portal e-learning FIKOM sebelum pukul 23:59 WIB.
+              </p>
+</div>
+</div>
+</div>
+<!-- Multi-line Editor Prompt Area -->
+<textarea aria-label="Area Editor Catatan" class="w-full bg-transparent border-0 focus:ring-0 p-0 font-body-large text-body-large text-on-surface placeholder:text-outline-variant/80 resize-none focus:outline-none" placeholder="Lanjutkan mengetik poin pembahasan kuliah selanjutnya di sini..." rows="4"></textarea>
+</div>
+</div>
+</main>
+<!-- STICKY ACTION BAR (THUMB-ZONE DOCKED) -->
+<footer class="fixed bottom-0 left-0 right-0 z-50 bg-surface-container-lowest/95 backdrop-blur-md shadow-lg border-t border-outline-variant/30">
+<div class="max-w-2xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+<!-- Word & Character Counter Indicator -->
+<div class="flex items-center gap-2 text-on-surface-variant min-w-0">
+<span class="material-symbols-outlined text-[18px] text-outline">text_fields</span>
+<div class="truncate">
+<span class="font-label-medium text-label-medium text-on-surface font-semibold">348</span>
+<span class="font-label-medium text-label-medium text-outline">kata</span>
+<span class="mx-1 text-outline-variant">•</span>
+<span class="font-label-medium text-label-medium text-on-surface font-semibold">1,840</span>
+<span class="font-label-medium text-label-medium text-outline">karakter</span>
+</div>
+</div>
+<!-- High-Contrast Prominent Save Button (Deep Indigo) -->
+<button class="h-11 px-6 rounded-full bg-primary-container text-on-primary font-label-large text-label-large font-bold flex items-center justify-center gap-2 shadow-md hover:bg-primary active:scale-[0.98] transition-all whitespace-nowrap" type="button">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">save</span>
+<span class="">Simpan Catatan</span>
+</button>
+</div>
+</footer>
+
+
+</body></html>

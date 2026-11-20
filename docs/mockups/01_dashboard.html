@@ -1,0 +1,404 @@
+<!-- StudyLog - Dashboard -->
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>StudyLog - Dashboard</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface": "#191c1e",
+            "outline-variant": "#c6c5d4",
+            "surface-tint": "#4755b6",
+            "tertiary": "#003b26",
+            "inverse-surface": "#2d3133",
+            "on-surface-variant": "#454652",
+            "on-secondary-fixed-variant": "#3a485b",
+            "primary": "#142588",
+            "surface": "#f7f9fb",
+            "outline": "#767683",
+            "background": "#f7f9fb",
+            "on-secondary-fixed": "#0d1c2e",
+            "error": "#ba1a1a",
+            "on-tertiary-container": "#3bcf95",
+            "surface-variant": "#e0e3e5",
+            "surface-container-low": "#f2f4f6",
+            "on-tertiary": "#ffffff",
+            "primary-container": "#303f9f",
+            "on-error": "#ffffff",
+            "surface-container-high": "#e6e8ea",
+            "tertiary-fixed": "#6ffbbe",
+            "on-tertiary-fixed-variant": "#005236",
+            "on-tertiary-fixed": "#002113",
+            "surface-container": "#eceef0",
+            "on-primary-fixed-variant": "#2d3c9c",
+            "secondary-container": "#d5e3fc",
+            "surface-container-highest": "#e0e3e5",
+            "secondary-fixed-dim": "#b9c7df",
+            "tertiary-fixed-dim": "#4edea3",
+            "inverse-primary": "#bbc3ff",
+            "error-container": "#ffdad6",
+            "inverse-on-surface": "#eff1f3",
+            "primary-fixed": "#dfe0ff",
+            "secondary-fixed": "#d5e3fc",
+            "on-primary": "#ffffff",
+            "on-secondary": "#ffffff",
+            "primary-fixed-dim": "#bbc3ff",
+            "tertiary-container": "#005438",
+            "secondary": "#515f74",
+            "on-primary-fixed": "#000d5f",
+            "surface-container-lowest": "#ffffff",
+            "surface-bright": "#f7f9fb",
+            "surface-dim": "#d8dadc",
+            "on-primary-container": "#aab4ff",
+            "on-background": "#191c1e",
+            "on-error-container": "#93000a",
+            "on-secondary-container": "#57657a"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "margin": "1rem",
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-md": ["Inter"],
+            "label-medium": ["Inter"],
+            "title-sm": ["Inter"],
+            "body-large": ["Inter"],
+            "title-lg": ["Inter"],
+            "title-medium": ["Inter"],
+            "label-large": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-medium": ["Inter"],
+            "label-sm": ["Inter"],
+            "display-lg": ["Inter"]
+          },
+          "fontSize": {
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "0px", "fontWeight": "700" }],
+            "headline-sm": ["24px", { "lineHeight": "32px", "letterSpacing": "0px", "fontWeight": "600" }],
+            "headline-md": ["28px", { "lineHeight": "36px", "letterSpacing": "0px", "fontWeight": "600" }],
+            "label-medium": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "600" }],
+            "title-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "600" }],
+            "body-large": ["16px", { "lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400" }],
+            "title-lg": ["22px", { "lineHeight": "28px", "letterSpacing": "0px", "fontWeight": "600" }],
+            "title-medium": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+            "label-large": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.4px", "fontWeight": "400" }],
+            "body-medium": ["14px", { "lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }],
+            "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1;
+    }
+    @keyframes subtle-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.9); }
+    }
+    .badge-pulse {
+      animation: subtle-pulse 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col font-body-medium selection:bg-secondary-container">
+<!-- TopAppBar (from Shared Components JSON & Specifications) -->
+<header class="fixed top-0 left-0 right-0 w-full z-40 flex items-center justify-between px-4 h-16 bg-surface dark:bg-inverse-surface shadow-sm dark:shadow-none">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-secondary-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined fill-icon" data-icon="school">school</span>
+</div>
+<div>
+<span class="text-title-lg font-title-lg font-bold text-primary dark:text-inverse-primary tracking-tight">StudyLog</span>
+</div>
+</div>
+<!-- Center/Right: Semester Tag Pill & Trailing Actions -->
+<div class="flex items-center gap-space-sm">
+<div class="hidden xs:flex sm:flex items-center gap-1 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-medium font-label-medium">
+<span class="">IFB5J</span>
+<span class="w-1 h-1 rounded-full bg-outline"></span>
+<span class="">Semester 5</span>
+</div>
+<button aria-label="Notifikasi" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container active:scale-95 transition-transform duration-150 relative" type="button">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span>
+</button>
+<button aria-label="Cari" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container active:scale-95 transition-transform duration-150" type="button">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 w-full max-w-2xl mx-auto px-margin pt-20 pb-28 space-y-space-lg">
+<!-- Greeting & Status Sub-header -->
+<section class="flex flex-col gap-1 pt-2">
+<div class="flex items-center justify-between">
+<div>
+<span class="text-body-sm font-body-sm text-secondary">Selasa, 24 Oktober 2023</span>
+
+</div>
+<div class="xs:hidden flex items-center gap-1 bg-secondary-container text-on-secondary-container px-2.5 py-0.5 rounded-full text-label-sm font-label-sm">
+<span class="">IFB5J • Sem 5</span>
+</div>
+</div>
+</section>
+<!-- Hero Section: Active Lecture Card (Ongoing Class) -->
+<section class="space-y-space-xs">
+<div class="flex items-center justify-between px-1">
+<h2 class="text-title-sm font-title-sm text-on-surface-variant">Kuliah Berlangsung</h2>
+<span class="text-label-sm font-label-sm text-primary font-semibold">Tersisa 45 menit</span>
+</div>
+<div class="relative bg-surface-container-lowest rounded-2xl p-space-md shadow-md border-l-4 border-l-error border border-surface-container-high overflow-hidden transition-all duration-200">
+<!-- Background subtle accent glow -->
+<div class="absolute -right-10 -bottom-10 w-44 h-44 bg-error/5 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Live Status Marker -->
+<div class="flex items-center justify-between mb-3">
+<div class="inline-flex items-center gap-1.5 bg-error text-on-error px-2.5 py-1 rounded-full text-label-sm font-label-sm shadow-sm" style="box-shadow: 0 0 12px rgba(239, 68, 68, 0.45);">
+<span class="w-2 h-2 rounded-full bg-white badge-pulse"></span>
+<span class="tracking-wide">SEDANG BERLANGSUNG</span>
+</div>
+<span class="text-label-medium font-label-medium bg-surface-container text-on-surface-variant px-2.5 py-0.5 rounded-md">
+            3 SKS
+          </span>
+</div>
+<!-- Course Title & Metadata -->
+<div class="space-y-1 mb-3">
+<h3 class="text-title-lg font-title-lg text-on-surface leading-tight">
+            Sistem Manajemen Basis Data
+          </h3>
+<div class="flex flex-wrap items-center gap-y-1 gap-x-3 text-body-sm font-body-sm text-secondary">
+<span class="inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-outline text-[18px]" data-icon="schedule">schedule</span>
+              19:00 - 20:30
+            </span>
+<span class="inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-outline text-[18px]" data-icon="room">room</span>
+              LAB B (FIKOM)
+            </span>
+</div>
+</div>
+<!-- Lecturer info -->
+<div class="flex items-center gap-2 mb-3.5 bg-surface-container-low p-2.5 rounded-xl">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-primary flex items-center justify-center font-bold text-label-medium">
+            HS
+          </div>
+<div class="flex flex-col">
+<span class="text-label-sm font-label-sm text-secondary">Dosen Pengampu</span>
+<span class="text-body-sm font-body-sm font-medium text-on-surface">Dr. Ir. Hendra Saputra, M.Kom.</span>
+</div>
+</div>
+<!-- Topic Highlight Chip -->
+<div class="mb-4">
+<span class="text-label-sm font-label-sm text-secondary block mb-1">Topik Pertemuan Hari Ini:</span>
+<div class="inline-flex items-center gap-1.5 bg-secondary-container/60 text-primary px-3 py-1 rounded-lg text-label-medium font-label-medium">
+<span class="material-symbols-outlined text-[16px]" data-icon="auto_stories">auto_stories</span>
+<span class="">Normalisasi Database 3NF &amp; BCNF</span>
+</div>
+</div>
+<!-- Prominent High-Contrast CTA Button -->
+<button class="w-full h-12 rounded-full bg-primary text-on-primary hover:bg-primary-container font-label-large text-label-large flex items-center justify-center gap-2 shadow-md active:scale-[0.98] transition-all duration-150" type="button">
+<span class="material-symbols-outlined fill-icon" data-icon="edit_square">edit_square</span>
+<span class="">Catat Sekarang</span>
+</button>
+</div>
+</section>
+<!-- Summary Stats Card: Bento-like Metrics -->
+<section class="space-y-space-xs">
+<div class="flex items-center justify-between px-1">
+<h2 class="text-title-sm font-title-sm text-on-surface-variant">Ringkasan Akademik</h2>
+<span class="text-label-sm font-label-sm text-secondary">Minggu Ke-8</span>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-space-md border border-surface-container-high shadow-sm grid grid-cols-3 gap-2 text-center divide-x divide-surface-container">
+<!-- Stat 1 -->
+<div class="flex flex-col items-center justify-center px-1">
+<div class="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center text-primary mb-1.5">
+<span class="material-symbols-outlined text-[20px]" data-icon="note_stack">note_stack</span>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-surface">42</span>
+<span class="text-label-sm font-label-sm text-secondary leading-tight mt-0.5">Catatan Tersimpan</span>
+</div>
+<!-- Stat 2 -->
+<div class="flex flex-col items-center justify-center px-1">
+<div class="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center text-primary mb-1.5">
+<span class="material-symbols-outlined text-[20px]" data-icon="library_books">library_books</span>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-surface">8</span>
+<span class="text-label-sm font-label-sm text-secondary leading-tight mt-0.5">Mata Kuliah Aktif</span>
+</div>
+<!-- Stat 3 -->
+<div class="flex flex-col items-center justify-center px-1">
+<div class="w-9 h-9 rounded-full bg-tertiary-fixed-dim/40 flex items-center justify-center text-tertiary mb-1.5">
+<span class="material-symbols-outlined text-[20px]" data-icon="event_available">event_available</span>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-surface">3</span>
+<span class="text-label-sm font-label-sm text-secondary leading-tight mt-0.5">Jadwal Hari Ini</span>
+</div>
+</div>
+</section>
+<!-- Quick Actions Section: Catat Cepat Mata Kuliah -->
+<section class="space-y-space-xs">
+<div class="flex items-center justify-between px-1">
+<div>
+<h2 class="text-title-sm font-title-sm text-on-surface">Catat Cepat Mata Kuliah</h2>
+<p class="text-body-sm font-body-sm text-secondary">Pilih kelas untuk membuat log materi baru secara instan</p>
+</div>
+</div>
+<!-- Course Chips Grid (8 College Courses) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+<!-- 1 -->
+<button class="group flex items-center gap-3 p-3 text-left rounded-xl bg-surface-container-lowest border border-surface-container hover:border-outline-variant hover:bg-surface-container-low active:scale-[0.98] transition-all duration-150" type="button">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-label-sm shrink-0">
+            SM
+          </div>
+<div class="flex-1 min-w-0">
+<p class="text-body-medium font-body-medium font-medium text-on-surface truncate group-hover:text-primary">Sistem Manajemen Basis Data</p>
+<span class="text-label-sm font-label-sm text-secondary">Senin &amp; Selasa</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:translate-x-0.5 transition-transform" data-icon="add_circle">add_circle</span>
+</button>
+<!-- 2 -->
+<button class="group flex items-center gap-3 p-3 text-left rounded-xl bg-surface-container-lowest border border-surface-container hover:border-outline-variant hover:bg-surface-container-low active:scale-[0.98] transition-all duration-150" type="button">
+<div class="w-8 h-8 rounded-lg bg-secondary-container flex items-center justify-center text-primary font-bold text-label-sm shrink-0">
+            KK
+          </div>
+<div class="flex-1 min-w-0">
+<p class="text-body-medium font-body-medium font-medium text-on-surface truncate group-hover:text-primary">Kriptografi &amp; Keamanan Data</p>
+<span class="text-label-sm font-label-sm text-secondary">Rabu, 08:00</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:translate-x-0.5 transition-transform" data-icon="add_circle">add_circle</span>
+</button>
+<!-- 3 -->
+<button class="group flex items-center gap-3 p-3 text-left rounded-xl bg-surface-container-lowest border border-surface-container hover:border-outline-variant hover:bg-surface-container-low active:scale-[0.98] transition-all duration-150" type="button">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface font-bold text-label-sm shrink-0">
+            KB
+          </div>
+<div class="flex-1 min-w-0">
+<p class="text-body-medium font-body-medium font-medium text-on-surface truncate group-hover:text-primary">Kecerdasan Buatan</p>
+<span class="text-label-sm font-label-sm text-secondary">Kamis, 10:00</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:translate-x-0.5 transition-transform" data-icon="add_circle">add_circle</span>
+</button>
+<!-- 4 -->
+<button class="group flex items-center gap-3 p-3 text-left rounded-xl bg-surface-container-lowest border border-surface-container hover:border-outline-variant hover:bg-surface-container-low active:scale-[0.98] transition-all duration-150" type="button">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-label-sm shrink-0">
+            RP
+          </div>
+<div class="flex-1 min-w-0">
+<p class="text-body-medium font-body-medium font-medium text-on-surface truncate group-hover:text-primary">Rekayasa Perangkat Lunak</p>
+<span class="text-label-sm font-label-sm text-secondary">Jumat, 13:30</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:translate-x-0.5 transition-transform" data-icon="add_circle">add_circle</span>
+</button>
+<!-- 5 -->
+<button class="group flex items-center gap-3 p-3 text-left rounded-xl bg-surface-container-lowest border border-surface-container hover:border-outline-variant hover:bg-surface-container-low active:scale-[0.98] transition-all duration-150" type="button">
+<div class="w-8 h-8 rounded-lg bg-secondary-container flex items-center justify-center text-primary font-bold text-label-sm shrink-0">
+            JK
+          </div>
+<div class="flex-1 min-w-0">
+<p class="text-body-medium font-body-medium font-medium text-on-surface truncate group-hover:text-primary">Jaringan Komputer Lanjut</p>
+<span class="text-label-sm font-label-sm text-secondary">Senin, 13:00</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:translate-x-0.5 transition-transform" data-icon="add_circle">add_circle</span>
+</button>
+<!-- 6 -->
+<button class="group flex items-center gap-3 p-3 text-left rounded-xl bg-surface-container-lowest border border-surface-container hover:border-outline-variant hover:bg-surface-container-low active:scale-[0.98] transition-all duration-150" type="button">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-on-surface font-bold text-label-sm shrink-0">
+            PW
+          </div>
+<div class="flex-1 min-w-0">
+<p class="text-body-medium font-body-medium font-medium text-on-surface truncate group-hover:text-primary">Pemrograman Web</p>
+<span class="text-label-sm font-label-sm text-secondary">Selasa, 10:15</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:translate-x-0.5 transition-transform" data-icon="add_circle">add_circle</span>
+</button>
+<!-- 7 -->
+<button class="group flex items-center gap-3 p-3 text-left rounded-xl bg-surface-container-lowest border border-surface-container hover:border-outline-variant hover:bg-surface-container-low active:scale-[0.98] transition-all duration-150" type="button">
+<div class="w-8 h-8 rounded-lg bg-secondary-container flex items-center justify-center text-primary font-bold text-label-sm shrink-0">
+            PB
+          </div>
+<div class="flex-1 min-w-0">
+<p class="text-body-medium font-body-medium font-medium text-on-surface truncate group-hover:text-primary">Pemrosesan Bahasa Alami</p>
+<span class="text-label-sm font-label-sm text-secondary">Kamis, 15:30</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:translate-x-0.5 transition-transform" data-icon="add_circle">add_circle</span>
+</button>
+<!-- 8 -->
+<button class="group flex items-center gap-3 p-3 text-left rounded-xl bg-surface-container-lowest border border-surface-container hover:border-outline-variant hover:bg-surface-container-low active:scale-[0.98] transition-all duration-150" type="button">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-bold text-label-sm shrink-0">
+            EP
+          </div>
+<div class="flex-1 min-w-0">
+<p class="text-body-medium font-body-medium font-medium text-on-surface truncate group-hover:text-primary">Etika Profesi</p>
+<span class="text-label-sm font-label-sm text-secondary">Jumat, 08:30</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:translate-x-0.5 transition-transform" data-icon="add_circle">add_circle</span>
+</button>
+</div>
+</section>
+<!-- Contextual FAB (Thumb Zone Anchor for Fast Action) -->
+<div class="fixed right-5 bottom-24 z-30">
+<button aria-label="Tambah Catatan Cepat" class="h-14 px-5 rounded-full bg-primary-container text-on-primary shadow-xl hover:shadow-2xl flex items-center gap-2.5 active:scale-95 transition-transform duration-150" style="box-shadow: 0 10px 15px -3px rgba(48, 63, 159, 0.3);" type="button">
+<span class="material-symbols-outlined text-[24px]" data-icon="add">add</span>
+<span class="text-label-large font-label-large">Catat Kuliah</span>
+</button>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Executed verbatim from Shared Components JSON with 'Dashboard' active) -->
+<nav class="fixed bottom-0 left-0 right-0 w-full z-50 flex justify-around items-center h-20 px-2 pb-safe bg-surface-container-lowest dark:bg-inverse-surface shadow-lg dark:shadow-none">
+<!-- Tab 1: Dashboard (ACTIVE MATCH) -->
+<button class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-primary dark:text-inverse-primary rounded-full px-5 py-1 active:scale-95 transition-transform duration-150" type="button">
+<span class="material-symbols-outlined fill-icon text-[22px]" data-icon="dashboard">dashboard</span>
+<span class="text-label-medium font-label-medium mt-0.5">Dashboard</span>
+</button>
+<!-- Tab 2: Catatan -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-5 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-full active:scale-95 transition-transform duration-150" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="menu_book">menu_book</span>
+<span class="text-label-medium font-label-medium mt-0.5">Catatan</span>
+</button>
+<!-- Tab 3: Jadwal -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-5 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-full active:scale-95 transition-transform duration-150" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="calendar_today">calendar_today</span>
+<span class="text-label-medium font-label-medium mt-0.5">Jadwal</span>
+</button>
+<!-- Tab 4: Profil -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-5 py-1 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-full active:scale-95 transition-transform duration-150" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="person">person</span>
+<span class="text-label-medium font-label-medium mt-0.5">Profil</span>
+</button>
+</nav>
+
+
+</body></html>
