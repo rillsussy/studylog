@@ -48,6 +48,18 @@ class JadwalViewModel extends ChangeNotifier {
     );
   }
 
+  Future<int> tambahJadwal(Jadwal j) async {
+    final id = await _repo.tambah(j);
+    await muat();
+    return id;
+  }
+
+  Future<int> hapusJadwal(int id) async {
+    final res = await _repo.hapus(id);
+    await muat();
+    return res;
+  }
+
   void _perbaruiStatus() {
     _status = StatusKuliah.hitung(_items, _jam());
     notifyListeners();

@@ -6,8 +6,10 @@ import '../theme/app_theme.dart';
 import '../utils/format.dart';
 import '../viewmodels/catatan_view_model.dart';
 import '../viewmodels/jadwal_view_model.dart';
+import '../viewmodels/profil_view_model.dart';
 import 'daftar_catatan_page.dart';
 import 'form_catatan_page.dart';
+import 'jadwal_page.dart';
 import 'tentang_page.dart';
 
 String _inisial(String nama) {
@@ -34,145 +36,6 @@ class _BerandaPageState extends State<BerandaPage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => FormCatatanPage(jadwal: j)),
-    );
-  }
-
-  void _tampilkanDialogJadwal(BuildContext context, List<Jadwal> jadwalList) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppTheme.surfaceContainerLowest,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        maxChildSize: 0.9,
-        minChildSize: 0.5,
-        expand: false,
-        builder: (_, scroll) => Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 12),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppTheme.outlineVariant,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Jadwal Kuliah IFB5J',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.primary,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.secondaryContainer,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Text(
-                      '8 Mata Kuliah',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(),
-            Expanded(
-              child: ListView.separated(
-                controller: scroll,
-                padding: const EdgeInsets.all(16),
-                itemCount: jadwalList.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 10),
-                itemBuilder: (_, i) {
-                  final j = jadwalList[i];
-                  return Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: AppTheme.outlineVariant.withValues(alpha: 0.4),
-                      ),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: AppTheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            j.labelHari.substring(0, 3).toUpperCase(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                j.nama,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  color: AppTheme.onSurface,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                '${j.labelJam} • ${j.ruang}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppTheme.secondary,
-                                ),
-                              ),
-                              Text(
-                                j.dosen,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppTheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -216,34 +79,47 @@ class _BerandaPageState extends State<BerandaPage> {
           ],
         ),
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 6),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppTheme.secondaryContainer,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'IFB5J',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.onSecondaryContainer,
-                  ),
+          Builder(
+            builder: (ctx) {
+              ProfilViewModel? pVm;
+              try {
+                pVm = ctx.watch<ProfilViewModel>();
+              } catch (_) {}
+              final kelas = pVm?.profil.kelas ?? 'IFB5J';
+              final sem = pVm?.profil.semester ?? 'Sem 5';
+              return Container(
+                margin: const EdgeInsets.only(right: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
                 ),
-                SizedBox(width: 4),
-                Text(
-                  '• Sem 5',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppTheme.onSecondaryContainer,
-                  ),
+                decoration: BoxDecoration(
+                  color: AppTheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              ],
-            ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      kelas,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.onSecondaryContainer,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '• $sem',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.onSecondaryContainer,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
           IconButton(
             tooltip: 'Cari Catatan',
@@ -427,8 +303,12 @@ class _BerandaPageState extends State<BerandaPage> {
               if (mounted) setState(() => _tabIndex = 0);
             });
           } else if (i == 2) {
-            _tampilkanDialogJadwal(context, jadwalVm.items);
-            setState(() => _tabIndex = 0);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const JadwalPage()),
+            ).then((_) {
+              if (mounted) setState(() => _tabIndex = 0);
+            });
           } else if (i == 3) {
             Navigator.push(
               context,

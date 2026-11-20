@@ -1,79 +1,341 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../data/database_helper.dart';
+import '../data/profil_repository.dart';
+import '../models/profil.dart';
 import '../theme/app_theme.dart';
+import '../viewmodels/profil_view_model.dart';
 
-/// Halaman informasi aplikasi & profil kelompok (Tugas Pengayaan Bab 4.7 Workbook).
-class TentangPage extends StatelessWidget {
+/// Halaman informasi aplikasi & profil mahasiswa/kelompok (Workbook Bab 4.7).
+class TentangPage extends StatefulWidget {
   const TentangPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Tentang Aplikasi')),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
-        children: [
-          // Header Card
-          Center(
+  State<TentangPage> createState() => _TentangPageState();
+}
+
+class _TentangPageState extends State<TentangPage> {
+  late Profil _profilLocal;
+  late final ProfilRepository _repoFallback;
+
+  @override
+  void initState() {
+    super.initState();
+    _profilLocal = Profil.defaultProfil();
+    _repoFallback = ProfilRepository(DatabaseHelper.instance);
+    _muatProfil();
+  }
+
+  Future<void> _muatProfil() async {
+    final p = await _repoFallback.ambil();
+    if (mounted) {
+      setState(() => _profilLocal = p);
+    }
+  }
+
+  void _dialogEditProfil(
+    BuildContext context,
+    Profil profilAwal,
+    ProfilViewModel? vm,
+  ) {
+    final formKey = GlobalKey<FormState>();
+    final namaC = TextEditingController(text: profilAwal.nama);
+    final nimC = TextEditingController(text: profilAwal.nim);
+    final kelasC = TextEditingController(text: profilAwal.kelas);
+    final prodiC = TextEditingController(text: profilAwal.prodi);
+    final semesterC = TextEditingController(text: profilAwal.semester);
+    final institusiC = TextEditingController(text: profilAwal.institusi);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.badge_outlined, color: AppTheme.primary),
+            SizedBox(width: 8),
+            Text(
+              'Edit Data Profil',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Form(
+            key: formKey,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    color: AppTheme.secondaryContainer,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.primary.withValues(alpha: 0.12),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+                const Text(
+                  'Masukkan identitas mahasiswa yang aktif menggunakan aplikasi:',
+                  style: TextStyle(fontSize: 12, color: AppTheme.secondary),
+                ),
+                const SizedBox(height: 14),
+                TextFormField(
+                  key: const Key('field_profil_nama'),
+                  controller: namaC,
+                  decoration: const InputDecoration(
+                    labelText: 'Nama Lengkap *',
+                    prefixIcon: Icon(Icons.person),
                   ),
-                  child: const Icon(
-                    Icons.school,
-                    size: 40,
-                    color: AppTheme.primary,
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? 'Nama tidak boleh kosong'
+                      : null,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  key: const Key('field_profil_nim'),
+                  controller: nimC,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'NIM *',
+                    prefixIcon: Icon(Icons.pin),
+                  ),
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? 'NIM tidak boleh kosong'
+                      : null,
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        key: const Key('field_profil_kelas'),
+                        controller: kelasC,
+                        decoration: const InputDecoration(
+                          labelText: 'Kelas',
+                          prefixIcon: Icon(Icons.class_outlined),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextFormField(
+                        key: const Key('field_profil_semester'),
+                        controller: semesterC,
+                        decoration: const InputDecoration(
+                          labelText: 'Semester',
+                          prefixIcon: Icon(Icons.calendar_month),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  key: const Key('field_profil_prodi'),
+                  controller: prodiC,
+                  decoration: const InputDecoration(
+                    labelText: 'Program Studi',
+                    prefixIcon: Icon(Icons.school_outlined),
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'StudyLog',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.primary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Aplikasi Catatan Perkuliahan Offline-First',
-                  style: TextStyle(fontSize: 13, color: AppTheme.secondary),
-                ),
-                const SizedBox(height: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppTheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    'IFB5J • Versi 3.0 (3 Tabel Relasional SQLite)',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.onSurfaceVariant,
-                    ),
+                TextFormField(
+                  key: const Key('field_profil_institusi'),
+                  controller: institusiC,
+                  decoration: const InputDecoration(
+                    labelText: 'Institusi / Kampus',
+                    prefixIcon: Icon(Icons.account_balance),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Batal'),
+          ),
+          FilledButton.icon(
+            key: const Key('tombol_simpan_profil'),
+            icon: const Icon(Icons.save, size: 18),
+            label: const Text('Simpan'),
+            onPressed: () async {
+              if (formKey.currentState?.validate() != true) return;
+              final baru = Profil(
+                nama: namaC.text.trim(),
+                nim: nimC.text.trim(),
+                kelas: kelasC.text.trim().isEmpty
+                    ? 'IFB5J'
+                    : kelasC.text.trim(),
+                prodi: prodiC.text.trim().isEmpty
+                    ? 'S1 Informatika'
+                    : prodiC.text.trim(),
+                semester: semesterC.text.trim().isEmpty
+                    ? 'Semester 5'
+                    : semesterC.text.trim(),
+                institusi: institusiC.text.trim().isEmpty
+                    ? 'Universitas Mulia Balikpapan'
+                    : institusiC.text.trim(),
+              );
+
+              if (vm != null) {
+                await vm.perbarui(baru);
+              } else {
+                await _repoFallback.simpan(baru);
+                if (mounted) setState(() => _profilLocal = baru);
+              }
+
+              if (ctx.mounted) {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Profil mahasiswa berhasil disimpan'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ProfilViewModel? vm;
+    try {
+      vm = context.watch<ProfilViewModel>();
+    } catch (_) {}
+
+    final profil = vm?.profil ?? _profilLocal;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tentang Aplikasi'),
+        actions: [
+          IconButton(
+            tooltip: 'Edit Profil Mahasiswa',
+            icon: const Icon(Icons.edit_outlined),
+            onPressed: () => _dialogEditProfil(context, profil, vm),
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
+        children: [
+          // Header & Identitas Mahasiswa Aktif
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceContainerLowest,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppTheme.surfaceContainerHigh),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primary.withValues(alpha: 0.05),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 32,
+                      backgroundColor: AppTheme.primary,
+                      child: Text(
+                        _inisial(profil.nama),
+                        style: const TextStyle(
+                          color: AppTheme.onPrimary,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            profil.nama,
+                            key: const Key('label_profil_nama'),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'NIM: ${profil.nim}',
+                            key: const Key('label_profil_nim'),
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 4,
+                            children: [
+                              _BadgePill(label: profil.kelas),
+                              _BadgePill(label: profil.semester),
+                              _BadgePill(label: profil.prodi),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                const Divider(height: 1),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.account_balance,
+                            size: 16,
+                            color: AppTheme.secondary,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              profil.institusi,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppTheme.secondary,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                      ),
+                      icon: const Icon(Icons.edit, size: 16),
+                      label: const Text('Edit Profil'),
+                      onPressed: () => _dialogEditProfil(context, profil, vm),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
 
           // Card: Anggota Kelompok
           const _SectionCard(
@@ -166,8 +428,8 @@ class TentangPage extends StatelessWidget {
               ),
               SizedBox(height: 2),
               Text(
-                '• jadwal (id, kode, nama, hari, jam, ruang, dosen, sks)\n'
-                '• kategori (id, nama, warna, ikon)\n'
+                '• jadwal (id, kode, nama, hari, mulai, selesai, ruang, dosen, sks, kelas)\n'
+                '• kategori (id, nama, warna)\n'
                 '• catatan (id, judul, topik, isi, tanggal, favorit, jadwal_id FK, kategori_id FK)',
                 style: TextStyle(
                   fontSize: 12,
@@ -185,10 +447,12 @@ class TentangPage extends StatelessWidget {
             icon: Icons.bolt_outlined,
             children: [
               Text(
-                '• Deteksi Cerdas Perkuliahan Aktif ("Catat Sekarang") sesuai jadwal IFB5J\n'
+                '• Manajemen Jadwal Kuliah: tambah mata kuliah & kurangi/hapus jadwal\n'
+                '• Profil Mahasiswa interaktif (Nama, NIM, Kelas, Semester, Prodi)\n'
+                '• Deteksi Cerdas Perkuliahan Aktif ("Catat Sekarang") sesuai jadwal\n'
                 '• Pencarian teks instan (judul, isi, topik, mata kuliah)\n'
                 '• Pengurutan catatan (Terbaru ↔ Terlama)\n'
-                '• Filter multi-kategori dan penanda bintang/favorit permanen di SQLite\n'
+                '• Filter multi-kategori dan penanda favorit permanen di SQLite\n'
                 '• Salin dan bagikan catatan rapi ke papan klip (clipboard)',
                 style: TextStyle(
                   fontSize: 12,
@@ -199,6 +463,37 @@ class TentangPage extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  static String _inisial(String nama) {
+    final kata = nama.trim().split(RegExp(r'\s+'));
+    if (kata.isEmpty || kata.first.isEmpty) return 'U';
+    if (kata.length == 1) return kata.first.substring(0, 1).toUpperCase();
+    return '${kata[0][0]}${kata[1][0]}'.toUpperCase();
+  }
+}
+
+class _BadgePill extends StatelessWidget {
+  final String label;
+  const _BadgePill({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppTheme.secondaryContainer.withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: AppTheme.onSecondaryContainer,
+        ),
       ),
     );
   }

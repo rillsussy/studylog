@@ -23,8 +23,39 @@ final kategoriDenganId = [
 class FakeJadwalRepository extends JadwalRepository {
   FakeJadwalRepository() : super(DatabaseHelper());
 
+  final List<Jadwal> _items = List.of(jadwalDenganId);
+
   @override
-  Future<List<Jadwal>> semua() async => jadwalDenganId;
+  Future<List<Jadwal>> semua() async => List.unmodifiable(_items);
+
+  @override
+  Future<int> tambah(Jadwal j) async {
+    final maxId = _items.isEmpty
+        ? 0
+        : _items.map((e) => e.id ?? 0).reduce((a, b) => a > b ? a : b);
+    final id = maxId + 1;
+    final item = Jadwal(
+      id: id,
+      hari: j.hari,
+      mulai: j.mulai,
+      selesai: j.selesai,
+      kode: j.kode,
+      nama: j.nama,
+      sks: j.sks,
+      kelas: j.kelas,
+      ruang: j.ruang,
+      dosen: j.dosen,
+    );
+    _items.add(item);
+    return id;
+  }
+
+  @override
+  Future<int> hapus(int id) async {
+    final lenBefore = _items.length;
+    _items.removeWhere((item) => item.id == id);
+    return lenBefore - _items.length;
+  }
 }
 
 class FakeKategoriRepository extends KategoriRepository {

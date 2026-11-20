@@ -8,6 +8,7 @@ import '../viewmodels/jadwal_view_model.dart';
 import '../viewmodels/kategori_view_model.dart';
 import 'detail_catatan_page.dart';
 import 'form_catatan_page.dart';
+import 'jadwal_page.dart';
 import 'tentang_page.dart';
 
 class DaftarCatatanPage extends StatefulWidget {
@@ -486,41 +487,9 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
               if (i == 0) {
                 Navigator.pop(context);
               } else if (i == 2) {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: AppTheme.surfaceContainerLowest,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(24),
-                    ),
-                  ),
-                  builder: (_) => Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Mata Kuliah Semester 5',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.primary,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        for (final j in mataKuliah)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Text(
-                              '• ${j.nama} (${j.ruang})',
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const JadwalPage()),
                 );
               } else if (i == 3) {
                 Navigator.push(

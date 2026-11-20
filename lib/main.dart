@@ -5,11 +5,13 @@ import 'data/catatan_repository.dart';
 import 'data/database_helper.dart';
 import 'data/jadwal_repository.dart';
 import 'data/kategori_repository.dart';
+import 'data/profil_repository.dart';
 import 'screens/beranda_page.dart';
 import 'theme/app_theme.dart';
 import 'viewmodels/catatan_view_model.dart';
 import 'viewmodels/jadwal_view_model.dart';
 import 'viewmodels/kategori_view_model.dart';
+import 'viewmodels/profil_view_model.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +28,9 @@ void main() {
         ChangeNotifierProvider(
           create: (_) =>
               CatatanViewModel(CatatanRepository(helper))..muatCatatan(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ProfilViewModel(ProfilRepository(helper))..muat(),
         ),
       ],
       child: const StudyLogApp(),
