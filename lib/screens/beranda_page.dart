@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/jadwal.dart';
-import '../theme/app_theme.dart';
 import '../utils/format.dart';
 import '../viewmodels/catatan_view_model.dart';
 import '../viewmodels/jadwal_view_model.dart';
@@ -41,6 +40,8 @@ class _BerandaPageState extends State<BerandaPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     final jadwalVm = context.watch<JadwalViewModel>();
     final status = jadwalVm.status;
     final aktif = status.aktif;
@@ -52,79 +53,41 @@ class _BerandaPageState extends State<BerandaPage> {
     final dashboardTab = Scaffold(
       key: const ValueKey('tab_dashboard'),
       appBar: AppBar(
+        titleSpacing: 16,
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(7),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppTheme.secondaryContainer,
-                borderRadius: BorderRadius.circular(10),
+                color: cs.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
-                Icons.school,
+              child: Icon(
+                Icons.school_rounded,
                 size: 20,
-                color: AppTheme.primary,
+                color: cs.onPrimaryContainer,
               ),
             ),
             const SizedBox(width: 10),
-            const Text(
-              'StudyLog',
-              style: TextStyle(
-                color: AppTheme.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                letterSpacing: -0.3,
+            Flexible(
+              child: Text(
+                'StudyLog',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: tt.titleLarge?.copyWith(
+                  color: cs.onSurface,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.3,
+                ),
               ),
             ),
           ],
         ),
         actions: [
-          Builder(
-            builder: (ctx) {
-              ProfilViewModel? pVm;
-              try {
-                pVm = ctx.watch<ProfilViewModel>();
-              } catch (_) {}
-              final kelas = pVm?.profil.kelas ?? 'IFB5J';
-              final sem = pVm?.profil.semester ?? 'Sem 5';
-              return Container(
-                margin: const EdgeInsets.only(right: 6),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: AppTheme.secondaryContainer,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      kelas,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.onSecondaryContainer,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '• $sem',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.onSecondaryContainer,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
           IconButton(
             tooltip: 'Cari Catatan',
-            icon: const Icon(Icons.search, color: AppTheme.onSurfaceVariant),
+            icon: Icon(Icons.search, color: cs.onSurfaceVariant),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const DaftarCatatanPage()),
@@ -133,41 +96,85 @@ class _BerandaPageState extends State<BerandaPage> {
           IconButton(
             key: const Key('tombol_tentang'),
             tooltip: 'Tentang Aplikasi',
-            icon: const Icon(
-              Icons.info_outline,
-              color: AppTheme.onSurfaceVariant,
-            ),
+            icon: Icon(Icons.info_outline, color: cs.onSurfaceVariant),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const TentangPage()),
             ),
           ),
+          const SizedBox(width: 4),
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 108),
         children: [
-          // Greeting & Sub-header
+          // Greeting & Sub-header dengan pill kelas/semester responsif
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                formatTanggalSaja(DateTime.now()),
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: AppTheme.secondary,
-                  fontWeight: FontWeight.w500,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      formatTanggalSaja(DateTime.now()),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: tt.labelLarge?.copyWith(
+                        color: cs.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Universitas Mulia',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                    ),
+                  ],
                 ),
               ),
-              const Text(
-                'Universitas Mulia',
-                style: TextStyle(fontSize: 13, color: AppTheme.secondary),
+              const SizedBox(width: 10),
+              Flexible(
+                flex: 0,
+                child: Builder(
+                  builder: (ctx) {
+                    ProfilViewModel? pVm;
+                    try {
+                      pVm = ctx.watch<ProfilViewModel>();
+                    } catch (_) {}
+                    final kelas = pVm?.profil.kelas ?? 'IFB5J';
+                    final sem = pVm?.profil.semester ?? 'Sem 5';
+                    return ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 168),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: cs.secondaryContainer,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '$kelas • $sem',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: tt.labelMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: cs.onSecondaryContainer,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
 
-          // Hero Section: Kuliah Berlangsung
+          // Hero Section: Kuliah Berlangsung / Berikutnya
           if (aktif != null)
             _KartuKuliahAktif(
               jadwal: aktif,
@@ -180,7 +187,7 @@ class _BerandaPageState extends State<BerandaPage> {
               waktu: status.waktuBerikutnya,
             ),
 
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
 
           // Bento Ringkasan Akademik
           Consumer<CatatanViewModel>(
@@ -192,58 +199,67 @@ class _BerandaPageState extends State<BerandaPage> {
             ),
           ),
 
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
 
-          // Navigasi Cepat Utama (Placed high so always visible & hit-testable)
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Catatan Baru'),
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const FormCatatanPage()),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: OutlinedButton.icon(
-                  icon: const Icon(Icons.list, size: 18),
-                  label: const Text('Lihat Daftar Catatan'),
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const DaftarCatatanPage(),
+          // Navigasi Cepat Utama (Equal-height M3 tonal action cards)
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: _TombolAksiTonal(
+                    icon: Icons.edit_note_rounded,
+                    label: 'Catatan Baru',
+                    containerColor: cs.primaryContainer,
+                    contentColor: cs.onPrimaryContainer,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const FormCatatanPage(),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _TombolAksiTonal(
+                    icon: Icons.menu_book_rounded,
+                    label: 'Lihat Daftar Catatan',
+                    containerColor: cs.secondaryContainer,
+                    contentColor: cs.onSecondaryContainer,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const DaftarCatatanPage(),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 22),
 
-          // Quick Actions: Catat Cepat Mata Kuliah (No Row to prevent overflow)
+          // Quick Actions: Catat Cepat Mata Kuliah
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Catat Cepat Mata Kuliah',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.onSurface,
+                style: tt.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: cs.onSurface,
                 ),
               ),
               const SizedBox(height: 2),
-              const Text(
+              Text(
                 'Pilih kelas untuk membuat log materi baru secara instan',
-                style: TextStyle(fontSize: 12, color: AppTheme.secondary),
+                style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
           // ActionChips Grid (Preserve 8 ActionChip widgets for test stability)
           Wrap(
@@ -252,23 +268,31 @@ class _BerandaPageState extends State<BerandaPage> {
             children: [
               for (final j in mataKuliah)
                 ActionChip(
+                  backgroundColor: cs.surfaceContainerLow,
+                  side: BorderSide(
+                    color: cs.outlineVariant.withValues(alpha: 0.3),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   avatar: CircleAvatar(
-                    backgroundColor: AppTheme.primaryFixed,
+                    backgroundColor: cs.primaryContainer,
                     radius: 12,
                     child: Text(
                       _inisial(j.nama),
-                      style: const TextStyle(
+                      style: tt.labelSmall?.copyWith(
                         fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.onPrimaryFixed,
+                        fontWeight: FontWeight.w700,
+                        color: cs.onPrimaryContainer,
                       ),
                     ),
                   ),
                   label: Text(
                     j.nama,
-                    style: const TextStyle(
+                    style: tt.labelLarge?.copyWith(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
+                      color: cs.onSurface,
                     ),
                   ),
                   onPressed: () => _catat(context, j),
@@ -309,12 +333,12 @@ class _BerandaPageState extends State<BerandaPage> {
 
     return Scaffold(
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 240),
+        duration: const Duration(milliseconds: 220),
         switchInCurve: Curves.easeOutCubic,
         switchOutCurve: Curves.easeInCubic,
         transitionBuilder: (child, animation) {
           final slide = Tween<Offset>(
-            begin: const Offset(0, 0.02),
+            begin: const Offset(0, 0.015),
             end: Offset.zero,
           ).animate(animation);
           return FadeTransition(
@@ -358,6 +382,55 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 }
 
+class _TombolAksiTonal extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color containerColor;
+  final Color contentColor;
+  final VoidCallback onTap;
+
+  const _TombolAksiTonal({
+    required this.icon,
+    required this.label,
+    required this.containerColor,
+    required this.contentColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    return Material(
+      color: containerColor,
+      borderRadius: BorderRadius.circular(20),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 22, color: contentColor),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: tt.labelLarge?.copyWith(
+                  color: contentColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _KartuKuliahAktif extends StatelessWidget {
   final Jadwal jadwal;
   final bool segera;
@@ -371,203 +444,188 @@ class _KartuKuliahAktif extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.surfaceContainerHigh),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.red.withValues(alpha: 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: cs.primaryContainer,
+        borderRadius: BorderRadius.circular(24),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          decoration: const BoxDecoration(
-            border: Border(left: BorderSide(color: AppTheme.error, width: 4)),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.error,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.error.withValues(alpha: 0.4),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          segera ? 'SEGERA DIMULAI' : 'SEDANG BERLANGSUNG',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppTheme.surfaceContainer,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      '${jadwal.sks} SKS',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.onSurfaceVariant,
+                  decoration: BoxDecoration(
+                    color: cs.errorContainer,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: cs.error,
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          segera ? 'SEGERA DIMULAI' : 'SEDANG BERLANGSUNG',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: tt.labelSmall?.copyWith(
+                            color: cs.onErrorContainer,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                jadwal.nama,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.onSurface,
-                  height: 1.2,
                 ),
               ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.schedule,
-                    size: 16,
-                    color: AppTheme.secondary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    jadwal.labelJam,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppTheme.secondary,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Icon(
-                    Icons.meeting_room_outlined,
-                    size: 16,
-                    color: AppTheme.secondary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    jadwal.ruang,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppTheme.secondary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
+              const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
-                  color: AppTheme.surfaceContainerLow,
+                  color: cs.surface.withValues(alpha: 0.72),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: AppTheme.secondaryContainer,
-                      radius: 16,
-                      child: Text(
-                        _inisial(jadwal.dosen),
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.primary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Dosen Pengampu',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: AppTheme.secondary,
-                            ),
-                          ),
-                          Text(
-                            jadwal.dosen,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.onSurface,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 14),
-              SizedBox(
-                width: double.infinity,
-                height: 46,
-                child: FilledButton.icon(
-                  key: const Key('tombol_catat_sekarang'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppTheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
+                child: Text(
+                  '${jadwal.sks} SKS',
+                  style: tt.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: cs.onPrimaryContainer,
                   ),
-                  icon: const Icon(Icons.edit_square, size: 18),
-                  label: const Text(
-                    'Catat Sekarang',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                  ),
-                  onPressed: onCatat,
                 ),
               ),
             ],
           ),
-        ),
+          const SizedBox(height: 14),
+          Text(
+            jadwal.nama,
+            style: tt.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: cs.onPrimaryContainer,
+              height: 1.2,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 14,
+            runSpacing: 6,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.schedule_rounded,
+                    size: 16,
+                    color: cs.onPrimaryContainer.withValues(alpha: 0.8),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    jadwal.labelJam,
+                    style: tt.bodySmall?.copyWith(
+                      color: cs.onPrimaryContainer.withValues(alpha: 0.85),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.meeting_room_outlined,
+                    size: 16,
+                    color: cs.onPrimaryContainer.withValues(alpha: 0.8),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    jadwal.ruang,
+                    style: tt.bodySmall?.copyWith(
+                      color: cs.onPrimaryContainer.withValues(alpha: 0.85),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: cs.surface.withValues(alpha: 0.72),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: cs.secondaryContainer,
+                  radius: 16,
+                  child: Text(
+                    _inisial(jadwal.dosen),
+                    style: tt.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: cs.onSecondaryContainer,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Dosen Pengampu',
+                        style: tt.labelSmall?.copyWith(
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                      Text(
+                        jadwal.dosen,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: tt.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: FilledButton.icon(
+              key: const Key('tombol_catat_sekarang'),
+              icon: const Icon(Icons.edit_square, size: 18),
+              label: const Text('Catat Sekarang'),
+              onPressed: onCatat,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -581,78 +639,74 @@ class _KartuTidakAdaKuliah extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     final b = berikutnya;
+
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.surfaceContainerHigh),
+        color: cs.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(24),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppTheme.secondaryContainer,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    Icons.event_available,
-                    color: AppTheme.primary,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Text(
-                    'Tidak ada perkuliahan saat ini',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.onSurface,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            if (b != null) ...[
-              const SizedBox(height: 12),
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppTheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(12),
+                  color: cs.secondaryContainer,
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Berikutnya: ${b.nama}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${b.labelHari}, ${formatTanggalSaja(waktu!)} • ${b.labelJam} • ${b.ruang}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.secondary,
-                      ),
-                    ),
-                  ],
+                child: Icon(
+                  Icons.event_available_rounded,
+                  color: cs.onSecondaryContainer,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Tidak ada perkuliahan saat ini',
+                  style: tt.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: cs.onSurface,
+                  ),
                 ),
               ),
             ],
+          ),
+          if (b != null) ...[
+            const SizedBox(height: 14),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: cs.surfaceContainerLowest,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Berikutnya: ${b.nama}',
+                    style: tt.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: cs.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${b.labelHari}, ${formatTanggalSaja(waktu!)} • ${b.labelJam} • ${b.ruang}',
+                    style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                  ),
+                ],
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -673,79 +727,91 @@ class _BentoRingkasanAkademik extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.surfaceContainerHigh),
+        color: cs.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Ringkasan Akademik',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.onSurfaceVariant,
-                ),
-              ),
-              if (jumlahFavorit > 0)
-                Text(
-                  '$jumlahFavorit difavoritkan',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppTheme.primary,
-                    fontWeight: FontWeight.bold,
+              Expanded(
+                child: Text(
+                  'Ringkasan Akademik',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: tt.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: cs.onSurface,
                   ),
                 ),
+              ),
+              if (jumlahFavorit > 0) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: cs.primaryContainer,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Text(
+                    '$jumlahFavorit difavoritkan',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: tt.labelSmall?.copyWith(
+                      color: cs.onPrimaryContainer,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
           const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: _ItemBento(
-                  icon: Icons.notes,
-                  angka: '$totalCatatan',
-                  label: 'Catatan Tersimpan',
-                  iconColor: AppTheme.primary,
-                  iconBg: AppTheme.secondaryContainer,
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: _ItemBento(
+                    icon: Icons.notes_rounded,
+                    angka: '$totalCatatan',
+                    label: 'Catatan\nTersimpan',
+                    containerColor: cs.primaryContainer,
+                    contentColor: cs.onPrimaryContainer,
+                  ),
                 ),
-              ),
-              Container(
-                width: 1,
-                height: 48,
-                color: AppTheme.surfaceContainerHigh,
-              ),
-              Expanded(
-                child: _ItemBento(
-                  icon: Icons.library_books_outlined,
-                  angka: '$totalMatkul',
-                  label: 'Mata Kuliah Aktif',
-                  iconColor: AppTheme.primary,
-                  iconBg: AppTheme.secondaryContainer,
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _ItemBento(
+                    icon: Icons.library_books_outlined,
+                    angka: '$totalMatkul',
+                    label: 'Mata Kuliah\nAktif',
+                    containerColor: cs.secondaryContainer,
+                    contentColor: cs.onSecondaryContainer,
+                  ),
                 ),
-              ),
-              Container(
-                width: 1,
-                height: 48,
-                color: AppTheme.surfaceContainerHigh,
-              ),
-              Expanded(
-                child: _ItemBento(
-                  icon: Icons.event_available_outlined,
-                  angka: '$jadwalHariIni',
-                  label: 'Jadwal Hari Ini',
-                  iconColor: AppTheme.tertiary,
-                  iconBg: AppTheme.tertiaryFixedDim.withValues(alpha: 0.4),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _ItemBento(
+                    icon: Icons.event_available_outlined,
+                    angka: '$jadwalHariIni',
+                    label: 'Jadwal\nHari Ini',
+                    containerColor: cs.tertiaryContainer,
+                    contentColor: cs.onTertiaryContainer,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -757,47 +823,54 @@ class _ItemBento extends StatelessWidget {
   final IconData icon;
   final String angka;
   final String label;
-  final Color iconColor;
-  final Color iconBg;
+  final Color containerColor;
+  final Color contentColor;
 
   const _ItemBento({
     required this.icon,
     required this.angka,
     required this.label,
-    required this.iconColor,
-    required this.iconBg,
+    required this.containerColor,
+    required this.contentColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
-          child: Icon(icon, color: iconColor, size: 20),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          angka,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.onSurface,
+    final tt = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      decoration: BoxDecoration(
+        color: containerColor,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: contentColor, size: 20),
+          const SizedBox(height: 6),
+          Text(
+            angka,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: tt.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: contentColor,
+            ),
           ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 11,
-            color: AppTheme.secondary,
-            height: 1.1,
+          const SizedBox(height: 2),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: tt.labelSmall?.copyWith(
+              color: contentColor.withValues(alpha: 0.85),
+              fontWeight: FontWeight.w500,
+              height: 1.15,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

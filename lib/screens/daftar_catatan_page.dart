@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../theme/app_theme.dart';
 import '../utils/format.dart';
 import '../viewmodels/catatan_view_model.dart';
 import '../viewmodels/jadwal_view_model.dart';
@@ -39,6 +38,8 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     final jadwalVm = context.watch<JadwalViewModel>();
     final mataKuliah = jadwalVm.mataKuliahUnik;
     final kategoriVm = context.watch<KategoriViewModel>();
@@ -54,232 +55,235 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
           body = const Center(child: CircularProgressIndicator());
         } else if (vm.error != null) {
           body = Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(vm.error!, textAlign: TextAlign.center),
-                const SizedBox(height: 8),
-                TextButton(
-                  onPressed: vm.muatCatatan,
-                  child: const Text('Coba lagi'),
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.error_outline, size: 40, color: cs.error),
+                  const SizedBox(height: 12),
+                  Text(
+                    vm.error!,
+                    textAlign: TextAlign.center,
+                    style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+                  ),
+                  const SizedBox(height: 12),
+                  FilledButton.tonal(
+                    onPressed: vm.muatCatatan,
+                    child: const Text('Coba lagi'),
+                  ),
+                ],
+              ),
             ),
           );
         } else if (items.isEmpty) {
           body = Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: const BoxDecoration(
-                    color: AppTheme.surfaceContainerLow,
-                    shape: BoxShape.circle,
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: cs.surfaceContainerHigh,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.note_alt_outlined,
+                      size: 36,
+                      color: cs.onSurfaceVariant,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.note_alt_outlined,
-                    size: 40,
-                    color: AppTheme.outline,
+                  const SizedBox(height: 16),
+                  Text(
+                    vm.adaFilter
+                        ? 'Tidak ada catatan yang cocok'
+                        : 'Belum ada catatan',
+                    textAlign: TextAlign.center,
+                    style: tt.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: cs.onSurfaceVariant,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  vm.adaFilter
-                      ? 'Tidak ada catatan yang cocok'
-                      : 'Belum ada catatan',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         } else {
           body = ListView.separated(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
             itemCount: items.length,
             separatorBuilder: (_, _) => const SizedBox(height: 10),
             itemBuilder: (context, i) {
               final c = items[i];
               final kat = kategoriVm.cariById(c.kategoriId);
               final snippet = c.isi.replaceAll('\n', ' ').trim();
+              final accentColor = kat != null ? Color(kat.warna) : cs.primary;
 
               return Card(
+                margin: EdgeInsets.zero,
                 clipBehavior: Clip.antiAlias,
-                elevation: 1,
+                elevation: 0,
+                color: cs.surfaceContainerLow,
+                surfaceTintColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: const BorderSide(color: AppTheme.surfaceContainerHigh),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      left: BorderSide(
-                        color: kat != null
-                            ? Color(kat.warna)
-                            : AppTheme.primary,
-                        width: 4,
-                      ),
-                    ),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 6,
-                    ),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppTheme.secondaryContainer.withValues(
-                                    alpha: 0.6,
-                                  ),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.storage,
-                                      size: 12,
-                                      color: AppTheme.primary,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Flexible(
-                                      child: Text(
-                                        c.mataKuliah,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              AppTheme.onSecondaryFixedVariant,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.fromLTRB(16, 10, 8, 12),
+                  titleAlignment: ListTileTitleAlignment.top,
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: accentColor,
+                              shape: BoxShape.circle,
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              formatTanggal(c.tanggal),
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: AppTheme.outline,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          c.judul,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.onSurface,
                           ),
-                        ),
-                      ],
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (snippet.isNotEmpty) ...[
-                          const SizedBox(height: 4),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: cs.secondaryContainer,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                c.mataKuliah,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: tt.labelSmall?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: cs.onSecondaryContainer,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
                           Text(
-                            snippet,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: AppTheme.onSurfaceVariant,
+                            formatTanggal(c.tanggal),
+                            style: tt.labelSmall?.copyWith(
+                              color: cs.onSurfaceVariant,
                             ),
                           ),
                         ],
-                        const SizedBox(height: 8),
-                        Row(
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        c.judul,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: tt.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (snippet.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          snippet,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: tt.bodySmall?.copyWith(
+                            color: cs.onSurfaceVariant,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                      if (c.topik.trim().isNotEmpty || kat != null) ...[
+                        const SizedBox(height: 10),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 6,
                           children: [
                             if (c.topik.trim().isNotEmpty)
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
+                                  horizontal: 10,
+                                  vertical: 3,
                                 ),
-                                margin: const EdgeInsets.only(right: 6),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.surfaceContainerHigh,
+                                  color: cs.surfaceContainerHigh,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
                                   '#${c.topik.trim()}',
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    color: AppTheme.onSurfaceVariant,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: tt.labelSmall?.copyWith(
+                                    color: cs.onSurfaceVariant,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
                             if (kat != null)
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
+                                  horizontal: 10,
+                                  vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
                                   color: Color(kat.warna)
-                                      .withValues(alpha: 0.15),
+                                      .withValues(alpha: 0.14),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Text(
-                                  kat.nama,
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(kat.warna),
-                                  ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 6,
+                                      height: 6,
+                                      decoration: BoxDecoration(
+                                        color: Color(kat.warna),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      kat.nama,
+                                      style: tt.labelSmall?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(kat.warna),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                           ],
                         ),
                       ],
+                    ],
+                  ),
+                  trailing: IconButton(
+                    tooltip: c.favorit ? 'Hapus favorit' : 'Tandai favorit',
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(
+                      c.favorit ? Icons.star : Icons.star_border,
+                      color: c.favorit
+                          ? Colors.amber.shade700
+                          : cs.onSurfaceVariant,
                     ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          tooltip: c.favorit
-                              ? 'Hapus favorit'
-                              : 'Tandai favorit',
-                          icon: Icon(
-                            c.favorit ? Icons.star : Icons.star_border,
-                            color: c.favorit
-                                ? Colors.amber.shade700
-                                : AppTheme.outline,
-                          ),
-                          onPressed: () => vm.toggleFavorit(c),
-                        ),
-                        const Icon(
-                          Icons.chevron_right,
-                          color: AppTheme.outlineVariant,
-                        ),
-                      ],
-                    ),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => DetailCatatanPage(id: c.id!),
-                      ),
+                    onPressed: () => vm.toggleFavorit(c),
+                  ),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DetailCatatanPage(id: c.id!),
                     ),
                   ),
                 ),
@@ -301,52 +305,53 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
                 icon: Icon(vm.urutTerbaru ? Icons.south : Icons.north),
                 onPressed: () => vm.setUrutTerbaru(!vm.urutTerbaru),
               ),
-              IconButton(
-                tooltip: 'Filter Lanjutan',
-                icon: const Icon(Icons.tune),
-                onPressed: () {},
-              ),
             ],
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // M3 Search Bar
+              // M3 Pill Search Bar
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
                 child: Container(
-                  height: 48,
+                  height: 52,
                   decoration: BoxDecoration(
-                    color: AppTheme.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(24),
+                    color: cs.surfaceContainerHigh,
+                    borderRadius: BorderRadius.circular(28),
                   ),
+                  alignment: Alignment.center,
                   child: TextField(
                     key: const Key('field_cari'),
                     controller: _cariController,
                     textAlignVertical: TextAlignVertical.center,
+                    style: tt.bodyMedium?.copyWith(color: cs.onSurface),
                     decoration: InputDecoration(
+                      filled: false,
                       hintText: 'Cari judul, mata kuliah, atau isi...',
-                      hintStyle: const TextStyle(
-                        fontSize: 14,
-                        color: AppTheme.onSurfaceVariant,
+                      hintStyle: tt.bodyMedium?.copyWith(
+                        color: cs.onSurfaceVariant,
                       ),
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         Icons.search,
-                        color: AppTheme.onSurfaceVariant,
-                        size: 20,
+                        color: cs.onSurfaceVariant,
+                        size: 22,
                       ),
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
-                      isDense: true,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,
+                        vertical: 14,
                       ),
                       suffixIcon: _cariController.text.isEmpty
                           ? null
                           : IconButton(
                               tooltip: 'Hapus pencarian',
-                              icon: const Icon(Icons.close, size: 18),
+                              icon: Icon(
+                                Icons.close,
+                                size: 20,
+                                color: cs.onSurfaceVariant,
+                              ),
                               onPressed: () {
                                 _cariController.clear();
                                 vm.setKataKunci('');
@@ -358,9 +363,9 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
                 ),
               ),
 
-              // Filter Chips Carousel
+              // Filter Chips Carousel (Primary)
               SizedBox(
-                height: 40,
+                height: 44,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -370,6 +375,10 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
                       child: ChoiceChip(
                         label: Text('Semua ($total)'),
                         selected: vm.filterJadwalId == null && !vm.hanyaFavorit,
+                        side: BorderSide.none,
+                        backgroundColor: cs.surfaceContainerLow,
+                        selectedColor: cs.secondaryContainer,
+                        shape: const StadiumBorder(),
                         onSelected: (_) {
                           vm.setHanyaFavorit(false);
                           vm.setFilterJadwal(null);
@@ -380,9 +389,19 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
                       padding: const EdgeInsets.only(right: 8),
                       child: FilterChip(
                         key: const Key('chip_filter_favorit'),
-                        avatar: const Icon(Icons.star, size: 16),
+                        avatar: Icon(
+                          Icons.star,
+                          size: 16,
+                          color: vm.hanyaFavorit
+                              ? cs.onSecondaryContainer
+                              : Colors.amber.shade700,
+                        ),
                         label: const Text('Favorit'),
                         selected: vm.hanyaFavorit,
+                        side: BorderSide.none,
+                        backgroundColor: cs.surfaceContainerLow,
+                        selectedColor: cs.secondaryContainer,
+                        shape: const StadiumBorder(),
                         onSelected: vm.setHanyaFavorit,
                       ),
                     ),
@@ -392,6 +411,10 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
                         child: ChoiceChip(
                           label: Text(j.nama),
                           selected: vm.filterJadwalId == j.id,
+                          side: BorderSide.none,
+                          backgroundColor: cs.surfaceContainerLow,
+                          selectedColor: cs.secondaryContainer,
+                          shape: const StadiumBorder(),
                           onSelected: (_) => vm.setFilterJadwal(j.id),
                         ),
                       ),
@@ -399,11 +422,12 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
                 ),
               ),
 
+              // Filter Chips Carousel (Kategori)
               if (daftarKategori.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: SizedBox(
-                    height: 36,
+                    height: 40,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -418,6 +442,10 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
                               ),
                               label: Text(k.nama),
                               selected: vm.filterKategoriId == k.id,
+                              side: BorderSide.none,
+                              backgroundColor: cs.surfaceContainerLow,
+                              selectedColor: cs.secondaryContainer,
+                              shape: const StadiumBorder(),
                               onSelected: (aktif) =>
                                   vm.setFilterKategori(aktif ? k.id : null),
                             ),
@@ -429,7 +457,7 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
 
               // Sub-header Info
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -441,33 +469,41 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
                             : 'Total catatan: $total '
                                   '(${vm.urutTerbaru ? 'Terbaru' : 'Terlama'})',
                         key: const Key('label_jumlah_catatan'),
-                        style: const TextStyle(
-                          fontSize: 12,
+                        style: tt.labelMedium?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.outline,
+                          color: cs.onSurfaceVariant,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.cloud_done,
-                          size: 14,
-                          color: AppTheme.tertiaryContainer,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          'Tersinkron',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.primary,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: cs.tertiaryContainer.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.cloud_done_outlined,
+                            size: 13,
+                            color: cs.onTertiaryContainer,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 4),
+                          Text(
+                            'Tersinkron',
+                            style: tt.labelSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: cs.onTertiaryContainer,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

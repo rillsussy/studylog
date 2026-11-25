@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:studylog/main.dart';
 import 'package:studylog/models/jadwal.dart';
 import 'package:studylog/models/profil.dart';
 import 'package:studylog/screens/jadwal_page.dart';
 import 'package:studylog/screens/tentang_page.dart';
+import 'package:studylog/viewmodels/catatan_view_model.dart';
 import 'package:studylog/viewmodels/jadwal_view_model.dart';
+import 'package:studylog/viewmodels/kategori_view_model.dart';
 
 import 'fakes.dart';
 
@@ -145,6 +148,64 @@ void main() {
 
         expect(find.text('Bintang Sahda'), findsWidgets);
         expect(find.text('NIM: 2411025'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Layar sempit 360x800 dp bebas overflow di seluruh 4 tab navigasi',
+      (tester) async {
+        tester.view.physicalSize = const Size(1080, 2400);
+        tester.view.devicePixelRatio = 3.0; // 360x800 logical dp
+        addTearDown(tester.view.reset);
+
+        await tester.pumpWidget(
+          MultiProvider(
+            providers: [
+              ChangeNotifierProvider(
+                create: (_) => JadwalViewModel(
+                  FakeJadwalRepository(),
+                  jam: () => DateTime(2026, 11, 25, 15, 27),
+                  otomatis: false,
+                )..muat(),
+              ),
+              ChangeNotifierProvider(
+                create: (_) =>
+                    KategoriViewModel(FakeKategoriRepository())..muat(),
+              ),
+              ChangeNotifierProvider(
+                create: (_) =>
+                    CatatanViewModel(FakeCatatanRepository())..muatCatatan(),
+              ),
+            ],
+            child: const StudyLogApp(),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        // Pindah ke tab Catatan
+        await tester.tap(find.text('Catatan'));
+        await tester.pumpAndSettle();
+        expect(find.text('Catatan Kuliah'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+
+        // Pindah ke tab Jadwal
+        await tester.tap(find.text('Jadwal'));
+        await tester.pumpAndSettle();
+        expect(find.text('Jadwal Kuliah'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+
+        // Pindah ke tab Profil
+        await tester.tap(find.text('Profil'));
+        await tester.pumpAndSettle();
+        expect(find.text('Tentang Aplikasi'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+
+        // Kembali ke tab Dashboard
+        await tester.tap(find.text('Dashboard'));
+        await tester.pumpAndSettle();
+        expect(find.text('StudyLog'), findsOneWidget);
+        expect(tester.takeException(), isNull);
       },
     );
   });

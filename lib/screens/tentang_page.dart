@@ -6,7 +6,7 @@ import '../data/profil_repository.dart';
 import '../models/profil.dart';
 import '../viewmodels/profil_view_model.dart';
 
-/// Halaman Profil Mahasiswa dengan desain Material 3.
+/// Halaman Profil Mahasiswa dengan desain Google Material 3 (Material You).
 class TentangPage extends StatefulWidget {
   const TentangPage({super.key});
 
@@ -98,18 +98,24 @@ class _TentangPageState extends State<TentangPage> {
                         controller: kelasC,
                         decoration: const InputDecoration(
                           labelText: 'Kelas',
-                          prefixIcon: Icon(Icons.class_outlined),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 14,
+                          ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: TextFormField(
                         key: const Key('field_profil_semester'),
                         controller: semesterC,
                         decoration: const InputDecoration(
                           labelText: 'Semester',
-                          prefixIcon: Icon(Icons.calendar_month_outlined),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 14,
+                          ),
                         ),
                       ),
                     ),
@@ -211,57 +217,65 @@ class _TentangPageState extends State<TentangPage> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
         children: [
-          // Material 3 Hero Profile Card
+          // Material 3 Hero Profile Surface Container
           Card(
-            color: cs.surfaceContainerLowest,
+            margin: EdgeInsets.zero,
+            elevation: 0,
+            color: cs.surfaceContainerLow,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 22),
               child: Column(
                 children: [
                   CircleAvatar(
-                    radius: 40,
+                    radius: 44,
                     backgroundColor: cs.primaryContainer,
+                    foregroundColor: cs.onPrimaryContainer,
                     child: Text(
                       _inisial(profil.nama),
                       style: tt.headlineMedium?.copyWith(
-                        color: cs.onPrimary,
-                        fontWeight: FontWeight.bold,
+                        color: cs.onPrimaryContainer,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 16),
                   Text(
                     profil.nama,
                     key: const Key('label_profil_nama'),
                     textAlign: TextAlign.center,
-                    style: tt.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    style: tt.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
                       color: cs.onSurface,
+                      letterSpacing: -0.2,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'NIM: ${profil.nim}',
                     key: const Key('label_profil_nim'),
+                    textAlign: TextAlign.center,
                     style: tt.labelLarge?.copyWith(
                       color: cs.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   Wrap(
                     alignment: WrapAlignment.center,
                     spacing: 8,
-                    runSpacing: 6,
+                    runSpacing: 8,
                     children: [
                       _M3Badge(label: profil.kelas),
                       _M3Badge(label: profil.semester),
                       _M3Badge(label: profil.prodi),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 20),
                   FilledButton.tonalIcon(
                     icon: const Icon(Icons.edit_outlined, size: 18),
                     label: const Text('Edit Profil'),
@@ -271,21 +285,28 @@ class _TentangPageState extends State<TentangPage> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
 
-          // Material 3 Detail Identitas Mahasiswa
+          // Grouped M3 Informasi Akademik Section
           Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 8),
+            padding: const EdgeInsets.only(left: 12, bottom: 10),
             child: Text(
               'Informasi Akademik',
               style: tt.titleSmall?.copyWith(
                 color: cs.primary,
                 fontWeight: FontWeight.w600,
+                letterSpacing: 0.1,
               ),
             ),
           ),
           Card(
-            color: cs.surfaceContainerLowest,
+            margin: EdgeInsets.zero,
+            elevation: 0,
+            color: cs.surfaceContainerLow,
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
             child: Column(
               children: [
                 _InfoTile(
@@ -294,35 +315,35 @@ class _TentangPageState extends State<TentangPage> {
                   value: profil.nama,
                   onTap: () => _dialogEditProfil(context, profil, vm),
                 ),
-                const Divider(indent: 56),
+                const Divider(indent: 64, endIndent: 16),
                 _InfoTile(
                   icon: Icons.badge_outlined,
                   label: 'Nomor Induk Mahasiswa (NIM)',
                   value: profil.nim,
                   onTap: () => _dialogEditProfil(context, profil, vm),
                 ),
-                const Divider(indent: 56),
+                const Divider(indent: 64, endIndent: 16),
                 _InfoTile(
                   icon: Icons.class_outlined,
                   label: 'Kelas',
                   value: profil.kelas,
                   onTap: () => _dialogEditProfil(context, profil, vm),
                 ),
-                const Divider(indent: 56),
+                const Divider(indent: 64, endIndent: 16),
                 _InfoTile(
                   icon: Icons.calendar_month_outlined,
                   label: 'Semester',
                   value: profil.semester,
                   onTap: () => _dialogEditProfil(context, profil, vm),
                 ),
-                const Divider(indent: 56),
+                const Divider(indent: 64, endIndent: 16),
                 _InfoTile(
                   icon: Icons.school_outlined,
                   label: 'Program Studi',
                   value: profil.prodi,
                   onTap: () => _dialogEditProfil(context, profil, vm),
                 ),
-                const Divider(indent: 56),
+                const Divider(indent: 64, endIndent: 16),
                 _InfoTile(
                   icon: Icons.account_balance_outlined,
                   label: 'Institusi / Kampus',
@@ -352,16 +373,16 @@ class _M3Badge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: cs.secondaryContainer,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(100),
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 12,
+        style: tt.labelMedium?.copyWith(
           fontWeight: FontWeight.w600,
           color: cs.onSecondaryContainer,
         ),
@@ -388,11 +409,12 @@ class _InfoTile extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
     return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       leading: CircleAvatar(
-        backgroundColor: cs.secondaryContainer.withValues(alpha: 0.65),
-        foregroundColor: cs.primary,
-        radius: 18,
-        child: Icon(icon, size: 18),
+        backgroundColor: cs.secondaryContainer.withValues(alpha: 0.7),
+        foregroundColor: cs.onSecondaryContainer,
+        radius: 20,
+        child: Icon(icon, size: 20),
       ),
       title: Text(
         label,
@@ -400,12 +422,18 @@ class _InfoTile extends StatelessWidget {
       ),
       subtitle: Text(
         value,
-        style: tt.bodyMedium?.copyWith(
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: tt.bodyLarge?.copyWith(
           color: cs.onSurface,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
         ),
       ),
-      trailing: Icon(Icons.chevron_right, size: 18, color: cs.outline),
+      trailing: Icon(
+        Icons.chevron_right_rounded,
+        size: 20,
+        color: cs.onSurfaceVariant,
+      ),
       onTap: onTap,
     );
   }

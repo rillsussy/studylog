@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/jadwal.dart';
-import '../theme/app_theme.dart';
 import '../viewmodels/jadwal_view_model.dart';
 import 'daftar_catatan_page.dart';
 import 'form_catatan_page.dart';
 import 'tentang_page.dart';
 
-/// Halaman manajemen jadwal kuliah: menambah dan mengurangi (hapus) mata kuliah.
+/// Halaman manajemen jadwal kuliah dengan desain Google Material 3.
 class JadwalPage extends StatefulWidget {
   final bool tampilkanNavBar;
 
@@ -22,6 +21,7 @@ class _JadwalPageState extends State<JadwalPage> {
   final _tabIndex = 2; // Jadwal aktif
 
   void _dialogTambahJadwal(BuildContext context, JadwalViewModel vm) {
+    final cs = Theme.of(context).colorScheme;
     final formKey = GlobalKey<FormState>();
     final namaC = TextEditingController();
     final kodeC = TextEditingController(text: 'IFB');
@@ -37,20 +37,19 @@ class _JadwalPageState extends State<JadwalPage> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) {
+          final dialogCs = Theme.of(ctx).colorScheme;
+          final dialogTt = Theme.of(ctx).textTheme;
+
           String formatTime(TimeOfDay t) =>
               '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
           return AlertDialog(
-            title: const Row(
-              children: [
-                Icon(Icons.add_circle_outline, color: AppTheme.primary),
-                SizedBox(width: 8),
-                Text(
-                  'Tambah Mata Kuliah',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
+            icon: Icon(
+              Icons.event_note_outlined,
+              color: dialogCs.primary,
+              size: 28,
             ),
+            title: const Text('Tambah Mata Kuliah'),
             content: SingleChildScrollView(
               child: Form(
                 key: formKey,
@@ -63,7 +62,7 @@ class _JadwalPageState extends State<JadwalPage> {
                       controller: namaC,
                       decoration: const InputDecoration(
                         labelText: 'Nama Mata Kuliah *',
-                        prefixIcon: Icon(Icons.menu_book),
+                        prefixIcon: Icon(Icons.menu_book_outlined),
                         hintText: 'Misal: Kecerdasan Buatan',
                       ),
                       validator: (v) => v == null || v.trim().isEmpty
@@ -79,23 +78,33 @@ class _JadwalPageState extends State<JadwalPage> {
                             controller: kodeC,
                             decoration: const InputDecoration(
                               labelText: 'Kode MK',
-                              prefixIcon: Icon(Icons.tag),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 14,
+                              ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 10),
                         Expanded(
                           child: DropdownButtonFormField<int>(
                             initialValue: sksPilihan,
+                            isExpanded: true,
                             decoration: const InputDecoration(
                               labelText: 'SKS',
-                              prefixIcon: Icon(Icons.school_outlined),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 14,
+                              ),
                             ),
                             items: const [1, 2, 3, 4, 6]
                                 .map(
                                   (s) => DropdownMenuItem(
                                     value: s,
-                                    child: Text('$s SKS'),
+                                    child: Text(
+                                      '$s SKS',
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 )
                                 .toList(),
@@ -111,9 +120,10 @@ class _JadwalPageState extends State<JadwalPage> {
                     const SizedBox(height: 12),
                     DropdownButtonFormField<int>(
                       initialValue: hariPilihan,
+                      isExpanded: true,
                       decoration: const InputDecoration(
                         labelText: 'Hari Kuliah',
-                        prefixIcon: Icon(Icons.calendar_today),
+                        prefixIcon: Icon(Icons.calendar_today_outlined),
                       ),
                       items: List.generate(7, (i) {
                         final h = i + 1;
@@ -133,6 +143,7 @@ class _JadwalPageState extends State<JadwalPage> {
                       children: [
                         Expanded(
                           child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
                             onTap: () async {
                               final picked = await showTimePicker(
                                 context: ctx,
@@ -145,15 +156,35 @@ class _JadwalPageState extends State<JadwalPage> {
                             child: InputDecorator(
                               decoration: const InputDecoration(
                                 labelText: 'Jam Mulai',
-                                prefixIcon: Icon(Icons.access_time),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 14,
+                                ),
                               ),
-                              child: Text(formatTime(mulaiTime)),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.schedule_outlined,
+                                    size: 16,
+                                    color: dialogCs.onSurfaceVariant,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      formatTime(mulaiTime),
+                                      style: dialogTt.bodyMedium,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 10),
                         Expanded(
                           child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
                             onTap: () async {
                               final picked = await showTimePicker(
                                 context: ctx,
@@ -166,9 +197,28 @@ class _JadwalPageState extends State<JadwalPage> {
                             child: InputDecorator(
                               decoration: const InputDecoration(
                                 labelText: 'Jam Selesai',
-                                prefixIcon: Icon(Icons.access_time_filled),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 14,
+                                ),
                               ),
-                              child: Text(formatTime(selesaiTime)),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.schedule_rounded,
+                                    size: 16,
+                                    color: dialogCs.onSurfaceVariant,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      formatTime(selesaiTime),
+                                      style: dialogTt.bodyMedium,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -180,7 +230,7 @@ class _JadwalPageState extends State<JadwalPage> {
                       controller: ruangC,
                       decoration: const InputDecoration(
                         labelText: 'Ruang Perkuliahan',
-                        prefixIcon: Icon(Icons.room_outlined),
+                        prefixIcon: Icon(Icons.meeting_room_outlined),
                         hintText: 'Misal: LAB B / Ruang 304',
                       ),
                     ),
@@ -214,7 +264,7 @@ class _JadwalPageState extends State<JadwalPage> {
               ),
               FilledButton.icon(
                 key: const Key('tombol_simpan_jadwal'),
-                icon: const Icon(Icons.check, size: 18),
+                icon: const Icon(Icons.check_rounded, size: 18),
                 label: const Text('Simpan'),
                 onPressed: () async {
                   if (formKey.currentState?.validate() != true) return;
@@ -224,9 +274,11 @@ class _JadwalPageState extends State<JadwalPage> {
 
                   if (menitSelesai <= menitMulai) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Jam selesai harus setelah jam mulai'),
-                        backgroundColor: AppTheme.error,
+                      SnackBar(
+                        content: const Text(
+                          'Jam selesai harus setelah jam mulai',
+                        ),
+                        backgroundColor: cs.error,
                       ),
                     );
                     return;
@@ -259,7 +311,6 @@ class _JadwalPageState extends State<JadwalPage> {
                         content: Text(
                           'Mata kuliah "${baru.nama}" berhasil ditambahkan',
                         ),
-                        behavior: SnackBarBehavior.floating,
                       ),
                     );
                   }
@@ -277,19 +328,18 @@ class _JadwalPageState extends State<JadwalPage> {
     Jadwal j,
     JadwalViewModel vm,
   ) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.warning_amber_rounded, color: AppTheme.error),
-            SizedBox(width: 8),
-            Text('Hapus Mata Kuliah?'),
-          ],
-        ),
+        icon: Icon(Icons.delete_outline_rounded, color: cs.error, size: 28),
+        title: const Text('Hapus Mata Kuliah?'),
         content: Text(
           'Apakah Anda yakin ingin menghapus jadwal "${j.nama}" '
           '(${j.labelHari}, ${j.labelJam}) dari daftar perkuliahan?',
+          style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
         ),
         actions: [
           TextButton(
@@ -298,7 +348,10 @@ class _JadwalPageState extends State<JadwalPage> {
           ),
           FilledButton(
             key: const Key('tombol_konfirmasi_hapus_jadwal'),
-            style: FilledButton.styleFrom(backgroundColor: AppTheme.error),
+            style: FilledButton.styleFrom(
+              backgroundColor: cs.error,
+              foregroundColor: cs.onError,
+            ),
             onPressed: () async {
               if (j.id != null) {
                 await vm.hapusJadwal(j.id!);
@@ -308,7 +361,6 @@ class _JadwalPageState extends State<JadwalPage> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Mata kuliah "${j.nama}" berhasil dihapus'),
-                    behavior: SnackBarBehavior.floating,
                   ),
                 );
               }
@@ -324,62 +376,71 @@ class _JadwalPageState extends State<JadwalPage> {
   Widget build(BuildContext context) {
     final vm = context.watch<JadwalViewModel>();
     final items = vm.items;
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: widget.tampilkanNavBar,
         title: const Text('Jadwal Kuliah'),
         actions: [
-          IconButton(
+          IconButton.filledTonal(
             key: const Key('tombol_tambah_jadwal_appbar'),
             tooltip: 'Tambah Mata Kuliah',
             icon: const Icon(Icons.add),
             onPressed: () => _dialogTambahJadwal(context, vm),
           ),
+          const SizedBox(width: 12),
         ],
       ),
       body: items.isEmpty
           ? Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      color: AppTheme.secondaryContainer,
-                      shape: BoxShape.circle,
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: cs.secondaryContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.calendar_today_outlined,
+                        size: 36,
+                        color: cs.onSecondaryContainer,
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.calendar_today_outlined,
-                      size: 40,
-                      color: AppTheme.primary,
+                    const SizedBox(height: 16),
+                    Text(
+                      'Belum Ada Jadwal Kuliah',
+                      textAlign: TextAlign.center,
+                      style: tt.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: cs.onSurface,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Belum Ada Jadwal Kuliah',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.onSurface,
+                    const SizedBox(height: 6),
+                    Text(
+                      'Ketuk tombol di bawah untuk menambah mata kuliah baru',
+                      textAlign: TextAlign.center,
+                      style: tt.bodyMedium?.copyWith(
+                        color: cs.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'Ketuk tombol di bawah untuk menambah mata kuliah baru',
-                    style: TextStyle(fontSize: 13, color: AppTheme.secondary),
-                  ),
-                  const SizedBox(height: 16),
-                  FilledButton.icon(
-                    icon: const Icon(Icons.add),
-                    label: const Text('Tambah Mata Kuliah'),
-                    onPressed: () => _dialogTambahJadwal(context, vm),
-                  ),
-                ],
+                    const SizedBox(height: 20),
+                    FilledButton.tonalIcon(
+                      icon: const Icon(Icons.add),
+                      label: const Text('Tambah Mata Kuliah'),
+                      onPressed: () => _dialogTambahJadwal(context, vm),
+                    ),
+                  ],
+                ),
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 104),
               itemCount: items.length,
               itemBuilder: (context, i) {
                 final j = items[i];
@@ -388,88 +449,80 @@ class _JadwalPageState extends State<JadwalPage> {
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
                   elevation: 0,
+                  color: isToday
+                      ? cs.primaryContainer.withValues(alpha: 0.45)
+                      : cs.surfaceContainerLow,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    side: BorderSide(
-                      color: isToday
-                          ? AppTheme.primary.withValues(alpha: 0.5)
-                          : AppTheme.surfaceContainerHigh,
-                      width: isToday ? 1.5 : 1,
-                    ),
+                    borderRadius: BorderRadius.circular(24),
                   ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppTheme.surfaceContainerLowest,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border(
-                        left: BorderSide(
-                          color: isToday
-                              ? AppTheme.primary
-                              : AppTheme.secondary,
-                          width: 4,
-                        ),
-                      ),
-                    ),
-                    padding: const EdgeInsets.all(16),
+                  clipBehavior: Clip.antiAlias,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 16, 14, 14),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isToday
-                                    ? AppTheme.primaryContainer
-                                    : AppTheme.secondaryContainer,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                j.labelHari.toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: isToday
-                                      ? AppTheme.onPrimary
-                                      : AppTheme.onSecondaryContainer,
-                                ),
+                            Expanded(
+                              child: Wrap(
+                                spacing: 8,
+                                runSpacing: 6,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isToday
+                                          ? cs.primaryContainer
+                                          : cs.secondaryContainer,
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    child: Text(
+                                      j.labelHari.toUpperCase(),
+                                      style: tt.labelSmall?.copyWith(
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 0.4,
+                                        color: isToday
+                                            ? cs.onPrimaryContainer
+                                            : cs.onSecondaryContainer,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: cs.surfaceContainerHigh,
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    child: Text(
+                                      '${j.sks} SKS • ${j.kelas}',
+                                      style: tt.labelSmall?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: cs.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppTheme.surfaceContainerHigh,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                '${j.sks} SKS • ${j.kelas}',
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppTheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ),
-                            const Spacer(),
-                            // Tombol hapus mata kuliah
                             IconButton(
                               tooltip: 'Hapus Mata Kuliah',
-                              icon: const Icon(
-                                Icons.delete_outline,
-                                color: AppTheme.error,
-                                size: 20,
+                              style: IconButton.styleFrom(
+                                backgroundColor: cs.errorContainer.withValues(
+                                  alpha: 0.55,
+                                ),
+                                foregroundColor: cs.error,
                               ),
+                              icon: const Icon(Icons.delete_outline, size: 20),
                               visualDensity: VisualDensity.compact,
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
                               onPressed: () =>
                                   _konfirmasiHapusJadwal(context, j, vm),
                             ),
@@ -478,96 +531,92 @@ class _JadwalPageState extends State<JadwalPage> {
                         const SizedBox(height: 10),
                         Text(
                           j.nama,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.onSurface,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: tt.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: cs.onSurface,
+                            letterSpacing: -0.1,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 8),
                         Row(
                           children: [
-                            const Icon(
-                              Icons.access_time,
-                              size: 14,
-                              color: AppTheme.secondary,
+                            Icon(
+                              Icons.schedule_outlined,
+                              size: 15,
+                              color: isToday ? cs.primary : cs.onSurfaceVariant,
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 6),
                             Text(
                               j.labelJam,
-                              style: const TextStyle(
-                                fontSize: 13,
+                              style: tt.bodySmall?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: AppTheme.secondary,
+                                color: isToday ? cs.primary : cs.onSurface,
                               ),
                             ),
                             const SizedBox(width: 12),
-                            const Icon(
+                            Icon(
                               Icons.meeting_room_outlined,
-                              size: 14,
-                              color: AppTheme.secondary,
+                              size: 15,
+                              color: cs.onSurfaceVariant,
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 5),
                             Expanded(
                               child: Text(
                                 j.ruang,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: AppTheme.onSurfaceVariant,
-                                ),
+                                maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
+                                style: tt.bodySmall?.copyWith(
+                                  color: cs.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.person_outline,
-                              size: 14,
-                              color: AppTheme.outline,
+                              size: 15,
+                              color: cs.onSurfaceVariant,
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 6),
                             Expanded(
                               child: Text(
                                 j.dosen,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppTheme.onSurfaceVariant,
-                                ),
+                                maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
+                                style: tt.bodySmall?.copyWith(
+                                  color: cs.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            OutlinedButton.icon(
-                              style: OutlinedButton.styleFrom(
-                                visualDensity: VisualDensity.compact,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
-                                ),
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: FilledButton.tonalIcon(
+                            style: FilledButton.styleFrom(
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 8,
                               ),
-                              icon: const Icon(Icons.edit_note, size: 16),
-                              label: const Text(
-                                'Buat Catatan',
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => FormCatatanPage(jadwal: j),
-                                  ),
-                                );
-                              },
                             ),
-                          ],
+                            icon: const Icon(Icons.edit_note_rounded, size: 18),
+                            label: const Text('Buat Catatan'),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => FormCatatanPage(jadwal: j),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ],
                     ),
