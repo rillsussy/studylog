@@ -10,7 +10,9 @@ import 'tentang_page.dart';
 
 /// Halaman manajemen jadwal kuliah: menambah dan mengurangi (hapus) mata kuliah.
 class JadwalPage extends StatefulWidget {
-  const JadwalPage({super.key});
+  final bool tampilkanNavBar;
+
+  const JadwalPage({super.key, this.tampilkanNavBar = true});
 
   @override
   State<JadwalPage> createState() => _JadwalPageState();
@@ -325,6 +327,7 @@ class _JadwalPageState extends State<JadwalPage> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: widget.tampilkanNavBar,
         title: const Text('Jadwal Kuliah'),
         actions: [
           IconButton(
@@ -578,47 +581,51 @@ class _JadwalPageState extends State<JadwalPage> {
         label: const Text('Tambah Jadwal'),
         onPressed: () => _dialogTambahJadwal(context, vm),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _tabIndex,
-        onDestinationSelected: (i) {
-          if (i == _tabIndex) return;
-          if (i == 0) {
-            Navigator.popUntil(context, (route) => route.isFirst);
-          } else if (i == 1) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const DaftarCatatanPage()),
-            );
-          } else if (i == 3) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const TentangPage()),
-            );
-          }
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.menu_book_outlined),
-            selectedIcon: Icon(Icons.menu_book),
-            label: 'Catatan',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.calendar_today_outlined),
-            selectedIcon: Icon(Icons.calendar_today),
-            label: 'Jadwal',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profil',
-          ),
-        ],
-      ),
+      bottomNavigationBar: widget.tampilkanNavBar
+          ? NavigationBar(
+              selectedIndex: _tabIndex,
+              onDestinationSelected: (i) {
+                if (i == _tabIndex) return;
+                if (i == 0) {
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                } else if (i == 1) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const DaftarCatatanPage(),
+                    ),
+                  );
+                } else if (i == 3) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const TentangPage()),
+                  );
+                }
+              },
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.dashboard_outlined),
+                  selectedIcon: Icon(Icons.dashboard),
+                  label: 'Dashboard',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.menu_book_outlined),
+                  selectedIcon: Icon(Icons.menu_book),
+                  label: 'Catatan',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.calendar_today_outlined),
+                  selectedIcon: Icon(Icons.calendar_today),
+                  label: 'Jadwal',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.person_outline),
+                  selectedIcon: Icon(Icons.person),
+                  label: 'Profil',
+                ),
+              ],
+            )
+          : null,
     );
   }
 }

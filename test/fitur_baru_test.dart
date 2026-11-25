@@ -121,6 +121,10 @@ void main() {
 
         expect(find.text('Tentang Aplikasi'), findsOneWidget);
         expect(find.byKey(const Key('label_profil_nama')), findsOneWidget);
+        expect(find.text('Anggota Kelompok'), findsNothing);
+        expect(find.text('Mata Kuliah & Institusi'), findsNothing);
+        expect(find.text('Arsitektur & Basis Data'), findsNothing);
+        expect(find.text('Fitur Unggulan'), findsNothing);
 
         // Buka dialog edit profil
         await tester.tap(find.text('Edit Profil'));
@@ -139,7 +143,7 @@ void main() {
         await tester.tap(find.byKey(const Key('tombol_simpan_profil')));
         await tester.pumpAndSettle();
 
-        expect(find.text('Bintang Sahda'), findsOneWidget);
+        expect(find.text('Bintang Sahda'), findsWidgets);
         expect(find.text('NIM: 2411025'), findsOneWidget);
       },
     );

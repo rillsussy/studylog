@@ -4,10 +4,9 @@ import 'package:provider/provider.dart';
 import '../data/database_helper.dart';
 import '../data/profil_repository.dart';
 import '../models/profil.dart';
-import '../theme/app_theme.dart';
 import '../viewmodels/profil_view_model.dart';
 
-/// Halaman informasi aplikasi & profil mahasiswa/kelompok (Workbook Bab 4.7).
+/// Halaman Profil Mahasiswa dengan desain Material 3.
 class TentangPage extends StatefulWidget {
   const TentangPage({super.key});
 
@@ -39,6 +38,7 @@ class _TentangPageState extends State<TentangPage> {
     Profil profilAwal,
     ProfilViewModel? vm,
   ) {
+    final cs = Theme.of(context).colorScheme;
     final formKey = GlobalKey<FormState>();
     final namaC = TextEditingController(text: profilAwal.nama);
     final nimC = TextEditingController(text: profilAwal.nim);
@@ -50,16 +50,8 @@ class _TentangPageState extends State<TentangPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.badge_outlined, color: AppTheme.primary),
-            SizedBox(width: 8),
-            Text(
-              'Edit Data Profil',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
+        icon: Icon(Icons.badge_outlined, color: cs.primary, size: 28),
+        title: const Text('Edit Data Profil'),
         content: SingleChildScrollView(
           child: Form(
             key: formKey,
@@ -67,17 +59,18 @@ class _TentangPageState extends State<TentangPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'Masukkan identitas mahasiswa yang aktif menggunakan aplikasi:',
-                  style: TextStyle(fontSize: 12, color: AppTheme.secondary),
+                Text(
+                  'Perbarui identitas mahasiswa yang aktif menggunakan aplikasi:',
+                  style: Theme.of(ctx).textTheme.bodySmall
+                      ?.copyWith(color: cs.onSurfaceVariant),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 16),
                 TextFormField(
                   key: const Key('field_profil_nama'),
                   controller: namaC,
                   decoration: const InputDecoration(
                     labelText: 'Nama Lengkap *',
-                    prefixIcon: Icon(Icons.person),
+                    prefixIcon: Icon(Icons.person_outline),
                   ),
                   validator: (v) => v == null || v.trim().isEmpty
                       ? 'Nama tidak boleh kosong'
@@ -90,7 +83,7 @@ class _TentangPageState extends State<TentangPage> {
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     labelText: 'NIM *',
-                    prefixIcon: Icon(Icons.pin),
+                    prefixIcon: Icon(Icons.pin_outlined),
                   ),
                   validator: (v) => v == null || v.trim().isEmpty
                       ? 'NIM tidak boleh kosong'
@@ -116,7 +109,7 @@ class _TentangPageState extends State<TentangPage> {
                         controller: semesterC,
                         decoration: const InputDecoration(
                           labelText: 'Semester',
-                          prefixIcon: Icon(Icons.calendar_month),
+                          prefixIcon: Icon(Icons.calendar_month_outlined),
                         ),
                       ),
                     ),
@@ -137,7 +130,7 @@ class _TentangPageState extends State<TentangPage> {
                   controller: institusiC,
                   decoration: const InputDecoration(
                     labelText: 'Institusi / Kampus',
-                    prefixIcon: Icon(Icons.account_balance),
+                    prefixIcon: Icon(Icons.account_balance_outlined),
                   ),
                 ),
               ],
@@ -151,7 +144,7 @@ class _TentangPageState extends State<TentangPage> {
           ),
           FilledButton.icon(
             key: const Key('tombol_simpan_profil'),
-            icon: const Icon(Icons.save, size: 18),
+            icon: const Icon(Icons.save_outlined, size: 18),
             label: const Text('Simpan'),
             onPressed: () async {
               if (formKey.currentState?.validate() != true) return;
@@ -184,7 +177,6 @@ class _TentangPageState extends State<TentangPage> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Profil mahasiswa berhasil disimpan'),
-                    behavior: SnackBarBehavior.floating,
                   ),
                 );
               }
@@ -203,264 +195,142 @@ class _TentangPageState extends State<TentangPage> {
     } catch (_) {}
 
     final profil = vm?.profil ?? _profilLocal;
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tentang Aplikasi'),
         actions: [
-          IconButton(
+          IconButton.filledTonal(
             tooltip: 'Edit Profil Mahasiswa',
             icon: const Icon(Icons.edit_outlined),
             onPressed: () => _dialogEditProfil(context, profil, vm),
           ),
+          const SizedBox(width: 12),
         ],
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
         children: [
-          // Header & Identitas Mahasiswa Aktif
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: AppTheme.surfaceContainerLowest,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.surfaceContainerHigh),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.primary.withValues(alpha: 0.05),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+          // Material 3 Hero Profile Card
+          Card(
+            color: cs.surfaceContainerLowest,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor: cs.primaryContainer,
+                    child: Text(
+                      _inisial(profil.nama),
+                      style: tt.headlineMedium?.copyWith(
+                        color: cs.onPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    profil.nama,
+                    key: const Key('label_profil_nama'),
+                    textAlign: TextAlign.center,
+                    style: tt.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: cs.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'NIM: ${profil.nim}',
+                    key: const Key('label_profil_nim'),
+                    style: tt.labelLarge?.copyWith(
+                      color: cs.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    runSpacing: 6,
+                    children: [
+                      _M3Badge(label: profil.kelas),
+                      _M3Badge(label: profil.semester),
+                      _M3Badge(label: profil.prodi),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  FilledButton.tonalIcon(
+                    icon: const Icon(Icons.edit_outlined, size: 18),
+                    label: const Text('Edit Profil'),
+                    onPressed: () => _dialogEditProfil(context, profil, vm),
+                  ),
+                ],
+              ),
             ),
+          ),
+          const SizedBox(height: 16),
+
+          // Material 3 Detail Identitas Mahasiswa
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 8),
+            child: Text(
+              'Informasi Akademik',
+              style: tt.titleSmall?.copyWith(
+                color: cs.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Card(
+            color: cs.surfaceContainerLowest,
             child: Column(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      radius: 32,
-                      backgroundColor: AppTheme.primary,
-                      child: Text(
-                        _inisial(profil.nama),
-                        style: const TextStyle(
-                          color: AppTheme.onPrimary,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            profil.nama,
-                            key: const Key('label_profil_nama'),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.onSurface,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'NIM: ${profil.nim}',
-                            key: const Key('label_profil_nim'),
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 4,
-                            children: [
-                              _BadgePill(label: profil.kelas),
-                              _BadgePill(label: profil.semester),
-                              _BadgePill(label: profil.prodi),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                _InfoTile(
+                  icon: Icons.person_outline,
+                  label: 'Nama Lengkap',
+                  value: profil.nama,
+                  onTap: () => _dialogEditProfil(context, profil, vm),
                 ),
-                const SizedBox(height: 16),
-                const Divider(height: 1),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.account_balance,
-                            size: 16,
-                            color: AppTheme.secondary,
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              profil.institusi,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppTheme.secondary,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                      ),
-                      icon: const Icon(Icons.edit, size: 16),
-                      label: const Text('Edit Profil'),
-                      onPressed: () => _dialogEditProfil(context, profil, vm),
-                    ),
-                  ],
+                const Divider(indent: 56),
+                _InfoTile(
+                  icon: Icons.badge_outlined,
+                  label: 'Nomor Induk Mahasiswa (NIM)',
+                  value: profil.nim,
+                  onTap: () => _dialogEditProfil(context, profil, vm),
+                ),
+                const Divider(indent: 56),
+                _InfoTile(
+                  icon: Icons.class_outlined,
+                  label: 'Kelas',
+                  value: profil.kelas,
+                  onTap: () => _dialogEditProfil(context, profil, vm),
+                ),
+                const Divider(indent: 56),
+                _InfoTile(
+                  icon: Icons.calendar_month_outlined,
+                  label: 'Semester',
+                  value: profil.semester,
+                  onTap: () => _dialogEditProfil(context, profil, vm),
+                ),
+                const Divider(indent: 56),
+                _InfoTile(
+                  icon: Icons.school_outlined,
+                  label: 'Program Studi',
+                  value: profil.prodi,
+                  onTap: () => _dialogEditProfil(context, profil, vm),
+                ),
+                const Divider(indent: 56),
+                _InfoTile(
+                  icon: Icons.account_balance_outlined,
+                  label: 'Institusi / Kampus',
+                  value: profil.institusi,
+                  onTap: () => _dialogEditProfil(context, profil, vm),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 20),
-
-          // Card: Anggota Kelompok
-          const _SectionCard(
-            title: 'Anggota Kelompok',
-            icon: Icons.groups_outlined,
-            children: [
-              _MemberTile(
-                no: '1',
-                nama: 'Ryanda Hermawan',
-                nim: '2411068',
-                peran: 'Arsitektur SQLite 3 Tabel Relasional & Git',
-              ),
-              Divider(height: 16),
-              _MemberTile(
-                no: '2',
-                nama: 'Dewi Nofitta Sari',
-                nim: '2411065',
-                peran: 'Antarmuka Multi-Layar & State Provider',
-              ),
-              Divider(height: 16),
-              _MemberTile(
-                no: '3',
-                nama: 'Bintang Sahda Rayyu Sonora',
-                nim: '2411025',
-                peran: 'Pengujian Sistem, Video Demo & Dokumentasi',
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // Card: Mata Kuliah & Institusi
-          const _SectionCard(
-            title: 'Mata Kuliah & Institusi',
-            icon: Icons.account_balance_outlined,
-            children: [
-              Text(
-                'Pemrograman Aplikasi Bergerak',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.onSurface,
-                ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'Dosen Pengampu: Pramudya Prima Insan, S.Kom., M.Kom.',
-                style: TextStyle(fontSize: 13, color: AppTheme.secondary),
-              ),
-              SizedBox(height: 2),
-              Text(
-                'Program Studi S1 Informatika — Fakultas Ilmu Komputer\nUniversitas Mulia Balikpapan (2026)',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppTheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // Card: Arsitektur & Database
-          const _SectionCard(
-            title: 'Arsitektur & Basis Data',
-            icon: Icons.layers_outlined,
-            children: [
-              Text(
-                'Arsitektur Berlapis (Layered Architecture):',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primary,
-                ),
-              ),
-              SizedBox(height: 2),
-              Text(
-                'UI (Material 3) ↔ ViewModel (ChangeNotifier/Provider) ↔ Repository ↔ DatabaseHelper ↔ SQLite (sqflite)',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppTheme.onSurfaceVariant,
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                'Skema 3 Tabel Relasional SQLite (v3):',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primary,
-                ),
-              ),
-              SizedBox(height: 2),
-              Text(
-                '• jadwal (id, kode, nama, hari, mulai, selesai, ruang, dosen, sks, kelas)\n'
-                '• kategori (id, nama, warna)\n'
-                '• catatan (id, judul, topik, isi, tanggal, favorit, jadwal_id FK, kategori_id FK)',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppTheme.onSurfaceVariant,
-                  height: 1.3,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // Card: Fitur Unggulan
-          const _SectionCard(
-            title: 'Fitur Unggulan',
-            icon: Icons.bolt_outlined,
-            children: [
-              Text(
-                '• Manajemen Jadwal Kuliah: tambah mata kuliah & kurangi/hapus jadwal\n'
-                '• Profil Mahasiswa interaktif (Nama, NIM, Kelas, Semester, Prodi)\n'
-                '• Deteksi Cerdas Perkuliahan Aktif ("Catat Sekarang") sesuai jadwal\n'
-                '• Pencarian teks instan (judul, isi, topik, mata kuliah)\n'
-                '• Pengurutan catatan (Terbaru ↔ Terlama)\n'
-                '• Filter multi-kategori dan penanda favorit permanen di SQLite\n'
-                '• Salin dan bagikan catatan rapi ke papan klip (clipboard)',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppTheme.onSurfaceVariant,
-                  height: 1.5,
-                ),
-              ),
-            ],
           ),
         ],
       ),
@@ -475,134 +345,68 @@ class _TentangPageState extends State<TentangPage> {
   }
 }
 
-class _BadgePill extends StatelessWidget {
+class _M3Badge extends StatelessWidget {
   final String label;
-  const _BadgePill({required this.label});
+  const _M3Badge({required this.label});
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppTheme.secondaryContainer.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(6),
+        color: cs.secondaryContainer,
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          fontSize: 11,
+        style: TextStyle(
+          fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: AppTheme.onSecondaryContainer,
+          color: cs.onSecondaryContainer,
         ),
       ),
     );
   }
 }
 
-class _SectionCard extends StatelessWidget {
-  final String title;
+class _InfoTile extends StatelessWidget {
   final IconData icon;
-  final List<Widget> children;
+  final String label;
+  final String value;
+  final VoidCallback onTap;
 
-  const _SectionCard({
-    required this.title,
+  const _InfoTile({
     required this.icon,
-    required this.children,
+    required this.label,
+    required this.value,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.surfaceContainerHigh),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primary.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: cs.secondaryContainer.withValues(alpha: 0.65),
+        foregroundColor: cs.primary,
+        radius: 18,
+        child: Icon(icon, size: 18),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: AppTheme.primary),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ...children,
-        ],
+      title: Text(
+        label,
+        style: tt.labelMedium?.copyWith(color: cs.onSurfaceVariant),
       ),
-    );
-  }
-}
-
-class _MemberTile extends StatelessWidget {
-  final String no;
-  final String nama;
-  final String nim;
-  final String peran;
-
-  const _MemberTile({
-    required this.no,
-    required this.nama,
-    required this.nim,
-    required this.peran,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CircleAvatar(
-          backgroundColor: AppTheme.secondaryContainer,
-          radius: 12,
-          child: Text(
-            no,
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.primary,
-            ),
-          ),
+      subtitle: Text(
+        value,
+        style: tt.bodyMedium?.copyWith(
+          color: cs.onSurface,
+          fontWeight: FontWeight.w600,
         ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '$nama ($nim)',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                peran,
-                style: const TextStyle(fontSize: 12, color: AppTheme.secondary),
-              ),
-            ],
-          ),
-        ),
-      ],
+      ),
+      trailing: Icon(Icons.chevron_right, size: 18, color: cs.outline),
+      onTap: onTap,
     );
   }
 }

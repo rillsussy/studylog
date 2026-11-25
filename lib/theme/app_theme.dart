@@ -1,6 +1,51 @@
 import 'package:flutter/material.dart';
 
-/// Palet warna dan tema Material 3 StudyLog sesuai spesifikasi HTML Mockup.
+/// Transisi halaman Material 3 yang halus (Shared-Axis Fade + Subtle Slide)
+/// tanpa stutter/jank dari efek zoom berat pada layar Android maupun desktop.
+class _SmoothM3PageTransitionsBuilder extends PageTransitionsBuilder {
+  const _SmoothM3PageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final curved = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+
+    final slideAnimation = Tween<Offset>(
+      begin: const Offset(0.04, 0),
+      end: Offset.zero,
+    ).animate(curved);
+
+    final secondaryCurved = CurvedAnimation(
+      parent: secondaryAnimation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+
+    final exitSlide = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(-0.02, 0),
+    ).animate(secondaryCurved);
+
+    return SlideTransition(
+      position: exitSlide,
+      child: FadeTransition(
+        opacity: curved,
+        child: SlideTransition(position: slideAnimation, child: child),
+      ),
+    );
+  }
+}
+
+/// Palet warna dan tema Material 3 (M3) StudyLog.
 class AppTheme {
   // Primary Palette
   static const Color primary = Color(0xFF142588);
@@ -23,7 +68,7 @@ class AppTheme {
   static const Color tertiaryFixed = Color(0xFF6FFBBE);
   static const Color tertiaryFixedDim = Color(0xFF4EDEA3);
 
-  // Neutral / Surface Palette
+  // Neutral / Surface Palette (Material 3 Tonal Surfaces)
   static const Color background = Color(0xFFF7F9FB);
   static const Color surface = Color(0xFFF7F9FB);
   static const Color surfaceContainerLowest = Color(0xFFFFFFFF);
@@ -43,7 +88,7 @@ class AppTheme {
   static const Color onErrorContainer = Color(0xFF93000A);
 
   static ThemeData get lightTheme {
-    final colorScheme = ColorScheme(
+    const colorScheme = ColorScheme(
       brightness: Brightness.light,
       primary: primary,
       onPrimary: onPrimary,
@@ -73,49 +118,89 @@ class AppTheme {
       surfaceContainerHighest: surfaceContainerHighest,
     );
 
+    const smoothBuilder = _SmoothM3PageTransitionsBuilder();
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: background,
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: smoothBuilder,
+          TargetPlatform.iOS: smoothBuilder,
+          TargetPlatform.windows: smoothBuilder,
+          TargetPlatform.macOS: smoothBuilder,
+          TargetPlatform.linux: smoothBuilder,
+          TargetPlatform.fuchsia: smoothBuilder,
+        },
+      ),
       appBarTheme: const AppBarTheme(
         backgroundColor: surface,
+        surfaceTintColor: primary,
         foregroundColor: onSurface,
         elevation: 0,
-        scrolledUnderElevation: 1,
+        scrolledUnderElevation: 2,
         centerTitle: false,
         titleTextStyle: TextStyle(
-          color: primary,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
+          color: onSurface,
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
           letterSpacing: -0.2,
         ),
       ),
       cardTheme: CardThemeData(
         color: surfaceContainerLowest,
-        elevation: 1,
-        shadowColor: primary.withValues(alpha: 0.08),
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           side: const BorderSide(color: surfaceContainerHigh, width: 1),
         ),
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: surfaceContainerLowest,
+        surfaceTintColor: Colors.transparent,
+        elevation: 6,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: surfaceContainerLowest,
+        surfaceTintColor: Colors.transparent,
+        showDragHandle: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
+      dividerTheme: const DividerThemeData(
+        color: surfaceContainerHigh,
+        thickness: 1,
+        space: 1,
+      ),
+      listTileTheme: ListTileThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        iconColor: primary,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surfaceContainerLow,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: outlineVariant),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: outlineVariant.withValues(alpha: 0.6)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: error),
         ),
         contentPadding: const EdgeInsets.symmetric(
@@ -127,52 +212,52 @@ class AppTheme {
         style: FilledButton.styleFrom(
           backgroundColor: primary,
           foregroundColor: onPrimary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
+          shape: const StadiumBorder(),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: primary,
           side: const BorderSide(color: outlineVariant),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
+          shape: const StadiumBorder(),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: primaryContainer,
         foregroundColor: onPrimary,
-        elevation: 4,
+        elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       chipTheme: ChipThemeData(
         backgroundColor: surfaceContainerLow,
         labelStyle: const TextStyle(fontSize: 13, color: onSurfaceVariant),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: outlineVariant.withValues(alpha: 0.4)),
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: outlineVariant.withValues(alpha: 0.5)),
         ),
         selectedColor: secondaryContainer,
         secondaryLabelStyle: const TextStyle(
           fontSize: 13,
           color: primary,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: surfaceContainerLowest,
-        elevation: 3,
+        surfaceTintColor: Colors.transparent,
+        elevation: 2,
+        height: 72,
         indicatorColor: secondaryContainer,
+        indicatorShape: const StadiumBorder(),
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return const TextStyle(
               fontSize: 12,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
               color: primary,
             );
           }

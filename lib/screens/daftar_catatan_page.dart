@@ -12,7 +12,9 @@ import 'jadwal_page.dart';
 import 'tentang_page.dart';
 
 class DaftarCatatanPage extends StatefulWidget {
-  const DaftarCatatanPage({super.key});
+  final bool tampilkanNavBar;
+
+  const DaftarCatatanPage({super.key, this.tampilkanNavBar = true});
 
   @override
   State<DaftarCatatanPage> createState() => _DaftarCatatanPageState();
@@ -288,6 +290,7 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
 
         return Scaffold(
           appBar: AppBar(
+            automaticallyImplyLeading: widget.tampilkanNavBar,
             title: const Text('Catatan Kuliah'),
             actions: [
               IconButton(
@@ -481,46 +484,48 @@ class _DaftarCatatanPageState extends State<DaftarCatatanPage> {
             ),
             child: const Icon(Icons.edit_note, size: 28),
           ),
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: 1,
-            onDestinationSelected: (i) {
-              if (i == 0) {
-                Navigator.pop(context);
-              } else if (i == 2) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const JadwalPage()),
-                );
-              } else if (i == 3) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const TentangPage()),
-                );
-              }
-            },
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.dashboard_outlined),
-                selectedIcon: Icon(Icons.dashboard),
-                label: 'Dashboard',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.menu_book_outlined),
-                selectedIcon: Icon(Icons.menu_book),
-                label: 'Catatan',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.calendar_today_outlined),
-                selectedIcon: Icon(Icons.calendar_today),
-                label: 'Jadwal',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.person_outline),
-                selectedIcon: Icon(Icons.person),
-                label: 'Profil',
-              ),
-            ],
-          ),
+          bottomNavigationBar: widget.tampilkanNavBar
+              ? NavigationBar(
+                  selectedIndex: 1,
+                  onDestinationSelected: (i) {
+                    if (i == 0) {
+                      Navigator.pop(context);
+                    } else if (i == 2) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const JadwalPage()),
+                      );
+                    } else if (i == 3) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const TentangPage()),
+                      );
+                    }
+                  },
+                  destinations: const [
+                    NavigationDestination(
+                      icon: Icon(Icons.dashboard_outlined),
+                      selectedIcon: Icon(Icons.dashboard),
+                      label: 'Dashboard',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.menu_book_outlined),
+                      selectedIcon: Icon(Icons.menu_book),
+                      label: 'Catatan',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.calendar_today_outlined),
+                      selectedIcon: Icon(Icons.calendar_today),
+                      label: 'Jadwal',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.person_outline),
+                      selectedIcon: Icon(Icons.person),
+                      label: 'Profil',
+                    ),
+                  ],
+                )
+              : null,
         );
       },
     );

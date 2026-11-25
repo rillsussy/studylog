@@ -49,7 +49,8 @@ class _BerandaPageState extends State<BerandaPage> {
         .where((j) => j.hari == DateTime.now().weekday)
         .length;
 
-    return Scaffold(
+    final dashboardTab = Scaffold(
+      key: const ValueKey('tab_dashboard'),
       appBar: AppBar(
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -291,32 +292,44 @@ class _BerandaPageState extends State<BerandaPage> {
           }
         },
       ),
+    );
+
+    final Widget tabContent = switch (_tabIndex) {
+      1 => const DaftarCatatanPage(
+        key: ValueKey('tab_catatan'),
+        tampilkanNavBar: false,
+      ),
+      2 => const JadwalPage(
+        key: ValueKey('tab_jadwal'),
+        tampilkanNavBar: false,
+      ),
+      3 => const TentangPage(key: ValueKey('tab_profil')),
+      _ => dashboardTab,
+    };
+
+    return Scaffold(
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 240),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+        transitionBuilder: (child, animation) {
+          final slide = Tween<Offset>(
+            begin: const Offset(0, 0.02),
+            end: Offset.zero,
+          ).animate(animation);
+          return FadeTransition(
+            opacity: animation,
+            child: SlideTransition(position: slide, child: child),
+          );
+        },
+        child: tabContent,
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _tabIndex,
+        animationDuration: const Duration(milliseconds: 350),
         onDestinationSelected: (i) {
+          if (i == _tabIndex) return;
           setState(() => _tabIndex = i);
-          if (i == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const DaftarCatatanPage()),
-            ).then((_) {
-              if (mounted) setState(() => _tabIndex = 0);
-            });
-          } else if (i == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const JadwalPage()),
-            ).then((_) {
-              if (mounted) setState(() => _tabIndex = 0);
-            });
-          } else if (i == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const TentangPage()),
-            ).then((_) {
-              if (mounted) setState(() => _tabIndex = 0);
-            });
-          }
         },
         destinations: const [
           NavigationDestination(
